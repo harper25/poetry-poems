@@ -9,7 +9,6 @@ from pipenv_pipes.core import (
     find_environments,
     read_project_dir_file,
     write_project_dir_project_file,
-    delete_project_dir_file,
     find_binary,
     get_binary_version,
     delete_directory,
@@ -78,11 +77,3 @@ class TestProjectDirFile():
         with open(project_file, 'w') as fp:
             fp.write('fakePath')
         assert read_project_dir_file(temp_folder) == 'fakePath'
-
-    def test_delete_project_dir_file(self, temp_folder):
-        project_file = join(temp_folder, '.project')
-
-        with open(project_file, 'w') as fp:
-            fp.write('fakePath')
-        delete_project_dir_file(temp_folder)
-        assert not os.path.exists(project_file)

@@ -4,22 +4,25 @@
 
 import sys
 import click
+import os
 
 from . import __version__
 from .environment import EnvVars
 from .picker import Picker
 from .utils import get_query_matches, collapse_path
 from .pipenv import (
-    call_pipenv_venv,
     call_pipenv_shell,
+    PoetryConfig,
+    call_poetry_env
 )
 from .core import (
     find_environments,
     read_project_dir_file,
-    delete_project_dir_file,
     write_project_dir_project_file,
     get_binary_version,
     delete_directory,
+    find_poetry_projects,
+    add_new_poem
 )
 
 
@@ -29,25 +32,26 @@ from .core import (
     '--list', 'list_',
     is_flag=True,
     help='List Pipenv Projects')
-@click.option(
-    '--link', '-l', 'setlink',
-    help='Crete Environment Link to the Target Project Directory',
-    metavar='<ProjectDir>',
-    required=False,
-    type=click.Path(exists=True, resolve_path=True)
-    )
-@click.option('--unlink', '-u', 'unlink',
-              is_flag=True,
-              help='Unlink Project Directory from this Environment')
 @click.option('--delete', '-d', 'delete',
               is_flag=True,
               help='Deletes the target Enviroment')
 @click.option('--verbose', '-v', is_flag=True, help='Verbose')
 @click.option('--version', is_flag=True, help='Show Version')
 @click.option('--_completion', is_flag=True)
+@click.option(
+    '-p',
+    '--poems_file',
+    type=click.Path(exists=False),
+    default=lambda: f"{os.environ.get('HOME', '')}/.poetry-poems",
+    help='A path to the file listing all poems.',
+)
+@click.option('--add', '-a', is_flag=True)
+@click.option('--path', '-p', 'new_poem_path',
+              type=click.Path(exists=True),
+              default=lambda: os.path.abspath(os.getcwd()),
+              help='A path to a new poem.',)
 @click.pass_context
-def pipes(ctx, envname, list_, setlink, unlink, verbose, version, delete,
-          _completion):
+def poems(ctx, envname, list_, verbose, version, delete, _completion, poems_file, add, new_poem_path):
     """
 
     Pipes - PipEnv Environment Switcher
@@ -58,12 +62,6 @@ def pipes(ctx, envname, list_, setlink, unlink, verbose, version, delete,
     Delete an Environment:\n
         >>> pipes envname --delete
 
-    Set Project Directory:\n
-        >>> pipes --link path/to/project/path
-
-    Unset Project Directory:\n
-        >>> pipes envname --unlink
-
     See all Pipenv Environments:\n
         >>> pipes --list
         >>> pipes --list --verbose
@@ -73,32 +71,40 @@ def pipes(ctx, envname, list_, setlink, unlink, verbose, version, delete,
         click.echo(__version__)
         return
 
+    poetry_config = PoetryConfig()
     env_vars = EnvVars()
 
     if env_vars.HAS_CURSES:
         import curses # noqa flake8
+
+    ensure_poetry_config_is_ok(poetry_config)
     ensure_env_vars_are_ok(env_vars)
-    environments = find_environments(env_vars.PIPENV_HOME)
+
+    project_folders = find_poetry_projects(poems_file)
+    print(project_folders)
+
+    environments = find_environments(poetry_config.poetry_home)
     if not environments and not _completion:
         click.echo(
-            'No pipenv environments found in {}'.format(env_vars.PIPENV_HOME))
+            'No poetry environments found in {}'.format(env_vars.PIPENV_HOME))
         sys.exit(1)
 
     if _completion:
         return [click.echo(e.envname) for e in environments]
 
     if verbose:
-        click.echo('\nPIPENV_HOME: {}\n'.format(env_vars.PIPENV_HOME))
+        click.echo('\nPOETRY_HOME: {}\n'.format(poetry_config.poetry_home))
 
     if list_:
         print_project_list(environments=environments, verbose=verbose)
         sys.exit(0)
 
-    if setlink:
-        if setlink and envname:
-            msg = ("--link cannot be user with envname query")
-            raise click.UsageError(msg)
-        set_env_dir(project_dir=setlink)
+    if add:
+        ensure_project_dir_has_env(new_poem_path)
+        error_msg = add_new_poem(new_poem_path, project_folders, poems_file)
+        if error_msg:
+            click.echo(click.style(error_msg, fg='yellow'))
+        sys.exit(0)
 
     matches = get_query_matches(environments, envname)
     environment = ensure_one_match(envname, matches, environments)
@@ -116,14 +122,6 @@ def pipes(ctx, envname, list_, setlink, unlink, verbose, version, delete,
         else:
             msg = 'Could not delete enviroment {}'.format(environment.envpath)
             click.echo(click.style(msg, fg='red'))
-        sys.exit(0)
-
-    if unlink:
-        if delete_project_dir_file(environment.envpath):
-            click.echo(
-                'Project directory cleared [{}]'.format(environment.envpath))
-        else:
-            click.echo('Project directory was already clear.')
         sys.exit(0)
 
     else:
@@ -258,7 +256,7 @@ def ensure_one_match(query, matches, environments):
 
 
 def ensure_project_dir_has_env(project_dir):
-    output, code = call_pipenv_venv(project_dir)
+    output, code = call_poetry_env(project_dir)
     if code == 0:
         envpath = output
         return envpath
@@ -277,3 +275,22 @@ def ensure_env_vars_are_ok(env_vars):
     if error_msg:
         click.echo(click.style(error_msg, fg='red'))
         sys.exit(1)
+
+
+def ensure_poetry_config_is_ok(poetry_config):
+    error_msg = poetry_config.validate()
+    if error_msg:
+        click.echo(click.style(error_msg, fg='red'))
+        sys.exit(1)
+
+
+def get_or_exit(output, code):
+    if code == 0:
+        return output
+    else:
+        click.echo(click.style(output, fg='red'), err=True)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    poems()

@@ -13,6 +13,9 @@ class EnvVars():
         self.IS_MAC = sys.platform == 'darwin'
         self.IS_LINUX = sys.platform == 'linux'
 
+        self.POETRY_ACTIVE = os.getenv('POETRY_ACTIVE', '')
+        self.VIRTUAL_ENV = os.getenv('VIRTUAL_ENV', '')
+
         if self.IS_WINDOWS:
             default_home = '~/.virtualenvs'
         else:

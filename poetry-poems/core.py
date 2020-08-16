@@ -18,14 +18,33 @@ Environment = namedtuple('Environment', [
     ])
 
 
-def find_environments(pipenv_home):
+def find_poetry_projects(poems_file):
+    print()
+    print(poems_file)
+    mode = 'r' if os.path.exists(poems_file) else 'a+'
+
+    with open(poems_file, mode) as f:
+        project_folders = f.read()
+    project_folders = project_folders.splitlines()
+    return project_folders
+
+
+def add_new_poem(new_poem_path, project_names, poems_file):
+    if new_poem_path in project_names:
+        return 'Project already saved in poems!'
+
+    with open(poems_file, 'a') as f:
+        f.write(f'{new_poem_path}\n')
+
+
+def find_environments(poetry_home):
     """
     Returns Environment NamedTuple created from list of folders found in the
-    Pipenv Environment location
+    Poetry Environment location
     """
     environments = []
-    for folder_name in sorted(os.listdir(pipenv_home)):
-        envpath = os.path.join(pipenv_home, folder_name)
+    for folder_name in sorted(os.listdir(poetry_home)):
+        envpath = os.path.join(poetry_home, folder_name)
         project_name = get_project_name(folder_name)
         if not project_name:
             continue
@@ -100,13 +119,3 @@ def write_project_dir_project_file(envpath, project_dir):
     project_file = get_project_dir_filepath(envpath)
     with open(project_file, 'w') as fp:
         return fp.write(project_dir)
-
-
-def delete_project_dir_file(envpath):
-    project_file = get_project_dir_filepath(envpath)
-    try:
-        os.remove(project_file)
-    except IOError:
-        pass
-    else:
-        return project_file

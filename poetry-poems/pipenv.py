@@ -20,12 +20,6 @@ def PipedPopen(cmds, **kwargs):
     return output.strip(), code
 
 
-def call_pipenv_venv(project_dir, timeout=10):
-    """ Calls ``pipenv --venv`` from a given project directory """
-    output, code = PipedPopen(cmds=['pipenv', '--venv'], cwd=project_dir)
-    return output, code
-
-
 def call_pipenv_shell(cwd, envname='pipenv-shell', timeout=None):
     """ Calls ``pipenv shell``` from a given envname """
     environ = dict(os.environ)
@@ -54,3 +48,39 @@ def call_python_version(pybinpath):
     pybinpath = os.path.join(binpath, 'python')
     output, code = PipedPopen(cmds=[pybinpath, '--version'])
     return output, code
+
+
+def call_poetry_env(project_dir):
+    """ Calls ``poetry env`` from a given project directory """
+    output, code = PipedPopen(cmds=['poetry', 'env', 'list', '--full-path'], cwd=project_dir)
+    return output, code
+
+
+class PoetryConfig:
+    def __init__(self):
+        self.errors = []
+        self.poetry_home = ''
+        self.virtualenv_in_project = ''
+        self.call_poetry_virtualenvs_path()
+        self.call_poetry_virtualenv_in_project()
+
+    def call_poetry_virtualenvs_path(self):
+        output, code = PipedPopen(cmds=['poetry', 'config', 'virtualenvs.path'])
+        if code != 0:
+            self.errors.append(output)
+        else:
+            self.poetry_home = output
+
+    def call_poetry_virtualenv_in_project(self):
+        output, code = PipedPopen(cmds=['poetry', 'config', 'virtualenvs.in-project'])
+        if code != 0:
+            self.errors.append(output)
+        else:
+            self.virtualenv_in_project = output
+
+    def validate(self):
+        if self.errors:
+            error = '\n'.join(self.errors)
+            error_msg = f'Poetry config errors:\n {error}'
+            return error_msg
+        return
