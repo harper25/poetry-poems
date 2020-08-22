@@ -2,13 +2,10 @@
 
 import pytest  # noqa: F401
 import os
-from os.path import join
 from tempfile import mkdtemp
 
 from pipenv_pipes.core import (
     find_environments,
-    read_project_dir_file,
-    write_project_dir_project_file,
     find_binary,
     get_binary_version,
     delete_directory,
@@ -57,23 +54,3 @@ class TestFindEnvironments():
         envname = os.listdir(pipenv_home)[0]
         envpath = os.path.join(pipenv_home, envname)
         assert 'Python' in get_binary_version(envpath)
-
-
-class TestProjectDirFile():
-
-    """ Test functions for managing the .project file, aka project_dir file """
-
-    def test_write_project_dir_project_file(self, temp_folder):
-        project_file = join(temp_folder, '.project')
-        project_dir = 'fakeProjectPath'
-        write_project_dir_project_file(
-            envpath=temp_folder,
-            project_dir=project_dir)
-        with open(project_file, 'r') as fp:
-            assert fp.read() == project_dir
-
-    def test_read_project_dir_file(self, temp_folder):
-        project_file = join(temp_folder, '.project')
-        with open(project_file, 'w') as fp:
-            fp.write('fakePath')
-        assert read_project_dir_file(temp_folder) == 'fakePath'

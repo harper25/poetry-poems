@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from ..utils import collapse_path
-from ..core import get_binary_version, read_project_dir_file
+from ..core import get_binary_version
 from .colors import colors
 
 
@@ -41,7 +41,7 @@ class EnvLine(Line):
     @property
     def text(self):
         prefix = self.SELECTED_STR if self.selected else self.UNSELECTED_STR
-        project_dir = read_project_dir_file(self.env.envpath)
+        project_dir = self.env.project_name
         has_project_dir = bool(project_dir)
         if not has_project_dir:
             project_dir = self.UNSET_DIR_STR

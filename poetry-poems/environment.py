@@ -62,6 +62,7 @@ class EnvVars():
                 "before starting a new one.")
 
         elif self.PIPENV_VENV_IN_PROJECT:
+            # Not necessarily.
             error = 'PIPENV_VENV_IN_PROJECT is not supported at this time'
 
         else:

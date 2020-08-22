@@ -24,11 +24,6 @@ def get_query_matches(environments, query):
     return matches
 
 
-def get_project_dir_filepath(envpath):
-    """ Returns .project filepath from an environment path """
-    return os.path.join(envpath, '.project')
-
-
 def get_index_from_query(query):
     """ Index should be passed as 1: """
     pat = r'(\d+):$'

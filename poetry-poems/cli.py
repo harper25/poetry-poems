@@ -18,8 +18,6 @@ from .pipenv import (
 from .core import (
     find_environments,
     find_environments_in_poetry_home,
-    read_project_dir_file,
-    write_project_dir_project_file,
     get_binary_version,
     delete_directory,
     find_poetry_projects,
@@ -126,30 +124,10 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_po
         launch_env(environment)
 
 
-def set_env_dir(project_dir):
-
-    click.echo('Target Project Directory is: ', nl=False)
-    click.echo(click.style(project_dir, fg='blue'))
-    click.echo('Looking for associated Pipenv Environment...')
-
-    # Before setting project_dir, let's make sure directory is actually
-    # Associated with the env, otherwise activation will not work
-    project_dir_envpath = ensure_project_dir_has_env(project_dir)
-
-    click.echo("Found Environment: ", nl=False)
-    click.echo(click.style(project_dir_envpath, fg='blue'))
-
-    write_project_dir_project_file(project_dir_envpath, project_dir)
-    msg = ("\nProject Directory Set.")
-    click.echo(click.style(msg, fg='yellow'))
-
-    sys.exit(0)
-
-
 def launch_env(environment):
     """ Launch Pipenv Shell """
 
-    project_dir = ensure_has_project_dir_file(environment)
+    project_dir = environment.project_path
     msg_dir = click.style(
         "Project directory: '{}'".format(project_dir), fg='yellow')
     msg_env = click.style(
@@ -203,26 +181,6 @@ def print_project_list(environments, verbose):
                     project_dir=collapse_path(project_dir),
                     binversion=binversion,
                     ))
-
-
-def ensure_has_project_dir_file(environment):
-    """
-    Ensures the enviromend has .project file.
-    If check failes, error is printed recommending course of action
-    """
-    project_dir = read_project_dir_file(environment.envpath)
-
-    if project_dir:
-        return project_dir
-
-    else:
-        msg = (
-            "Pipenv enviroment '{env}' does not have project directory.\n"
-            "Use 'pipes --link <project-dir>' to link a project directory\n"
-            "with this enviroment".format(env=environment.envname))
-
-        click.echo(click.style(msg, fg='red'), err=True)
-        sys.exit(0)
 
 
 def ensure_one_match(query, matches, environments):

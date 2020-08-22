@@ -10,8 +10,7 @@ from click.testing import CliRunner
 from pipenv.project import Project
 
 from pipenv_pipes.core import (
-    find_environments,
-    write_project_dir_project_file,
+    find_environments
 )
 from pipenv_pipes.environment import EnvVars
 
@@ -129,10 +128,10 @@ def mock_env_home(TempEnviron, mock_projects_dir, venv_fresh):
         envs = find_environments(pipenv_home)
         for e in envs:
             project_dir = os.path.join(mock_projects_dir, e.project_name)
-            write_project_dir_project_file(
-                envpath=e.envpath,
-                project_dir=project_dir
-            )
+            # write_project_dir_project_file(
+            #     envpath=e.envpath,
+            #     project_dir=project_dir
+            # )
         with TempEnviron(WORKON_HOME=pipenv_home):
             yield pipenv_home, mock_projects_dir
         os.chdir(__cwd)

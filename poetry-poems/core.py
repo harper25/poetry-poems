@@ -7,7 +7,6 @@ from collections import namedtuple
 from .pipenv import call_python_version, call_poetry_env
 from .utils import (
     get_project_name,
-    get_project_dir_filepath,
 )
 
 Environment = namedtuple('Environment', [
@@ -132,23 +131,3 @@ def delete_directory(envpath):
             return True
         attempt += 1
         time.sleep(0.25)
-
-
-###############################
-# Project Dir File (.project) #
-###############################
-
-
-def read_project_dir_file(envpath):
-    project_file = get_project_dir_filepath(envpath)
-    try:
-        with open(project_file) as fp:
-            return fp.read().strip()
-    except IOError:
-        return
-
-
-def write_project_dir_project_file(envpath, project_dir):
-    project_file = get_project_dir_filepath(envpath)
-    with open(project_file, 'w') as fp:
-        return fp.write(project_dir)

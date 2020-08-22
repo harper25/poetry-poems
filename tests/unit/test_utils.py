@@ -4,13 +4,11 @@
 """ Tests for `pipenv_pipes` utils module."""
 
 import pytest
-import os
 
 
 from pipenv_pipes.utils import (
     get_project_name,
     get_query_matches,
-    get_project_dir_filepath,
     get_index_from_query,
 )
 
@@ -35,12 +33,6 @@ def test_get_project_name(folder_name, expected):
 def test_get_query_matches(query, num_results, envs):
     rv = get_query_matches(envs, query)
     assert len(rv) == num_results
-
-
-def test_get_project_dir_filepath():
-    path = os.path.join('fake', 'dir')
-    expected = os.path.join(path, '.project')
-    assert get_project_dir_filepath(path) == expected
 
 
 @pytest.mark.utils
