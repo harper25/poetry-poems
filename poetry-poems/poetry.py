@@ -20,8 +20,8 @@ def PipedPopen(cmds, **kwargs):
     return output.strip(), code
 
 
-def call_pipenv_shell(cwd, envname='pipenv-shell', timeout=None):
-    """ Calls ``pipenv shell``` from a given envname """
+def call_poetry_shell(cwd, envname='poetry-shell', timeout=None):
+    """ Calls ``poetry shell``` from a given envname """
     environ = dict(os.environ)
     environ['PROMPT'] = '({}){}'.format(envname, os.getenv('PROMPT', ''))
 
@@ -30,7 +30,7 @@ def call_pipenv_shell(cwd, envname='pipenv-shell', timeout=None):
     stderr = PIPE if is_test else sys.stderr
 
     proc = Popen(
-        ['pipenv', 'shell'],
+        ['poetry', 'shell'],
         cwd=cwd,
         shell=False,
         stdout=stdout,

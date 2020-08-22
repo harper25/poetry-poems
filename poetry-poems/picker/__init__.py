@@ -130,7 +130,7 @@ class Picker(object):
         return lines
 
     def get_title_lines(self):
-        title = 'Pipenv Environments'
+        title = 'Poetry Environments'
         title_line = Line(title, color=TITLE_COLOR, pad=2)
         bar_line = Line('-' * len(title), color=TITLE_COLOR, pad=2)
         blank_line = Line('')

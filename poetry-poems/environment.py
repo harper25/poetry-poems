@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" Pipes: Pipenv Shell Switcher """
+""" Poems: Poetry Shell Switcher """
 
 import os
 import sys

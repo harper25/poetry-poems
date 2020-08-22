@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" Pipes: Pipenv Shell Switcher """
+""" Poems: Poetry Shell Switcher """
 
 import sys
 import click
@@ -10,8 +10,8 @@ from . import __version__
 from .environment import EnvVars
 from .picker import Picker
 from .utils import get_query_matches, collapse_path
-from .pipenv import (
-    call_pipenv_shell,
+from .poetry import (
+    call_poetry_shell,
     PoetryConfig,
     call_poetry_env
 )
@@ -30,7 +30,7 @@ from .core import (
 @click.option(
     '--list', 'list_',
     is_flag=True,
-    help='List Pipenv Projects')
+    help='List Poetry Projects')
 @click.option('--delete', '-d', 'delete',
               is_flag=True,
               help='Deletes the target Enviroment')
@@ -52,17 +52,17 @@ from .core import (
 def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_poem_path):
     """
 
-    Pipes - PipEnv Environment Switcher
+    Poems - Poetry Environment Switcher
 
     Go To Project:\n
-        >>> pipes envname
+        >>> poems envname
 
     Delete an Environment:\n
-        >>> pipes envname --delete
+        >>> poems envname --delete
 
-    See all Pipenv Environments:\n
-        >>> pipes --list
-        >>> pipes --list --verbose
+    See all Poetry Environments:\n
+        >>> poems --list
+        >>> poems --list --verbose
 
     """
     if version:
@@ -125,7 +125,7 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_po
 
 
 def launch_env(environment):
-    """ Launch Pipenv Shell """
+    """ Launch Poetry Shell """
 
     project_dir = environment.project_path
     msg_dir = click.style(
@@ -135,9 +135,9 @@ def launch_env(environment):
     click.echo(msg_dir)
     click.echo(msg_env)
 
-    ensure_project_dir_has_env(project_dir)
-    call_pipenv_shell(cwd=project_dir, envname=environment.envname)
-    msg = 'Terminating Pipes Shell...'
+    call_poetry_shell(cwd=project_dir, envname=environment.envname)
+
+    msg = 'Terminating Poems Shell...'
     click.echo(click.style(msg, fg='red'))
     sys.exit(0)
 

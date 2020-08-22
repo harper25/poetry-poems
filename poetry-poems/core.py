@@ -4,7 +4,7 @@ import shutil
 import time
 from collections import namedtuple
 
-from .pipenv import call_python_version, call_poetry_env
+from .poetry import call_python_version, call_poetry_env
 from .utils import (
     get_project_name,
 )

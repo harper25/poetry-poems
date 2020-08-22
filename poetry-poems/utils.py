@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-""" Pipes: Pipenv Shell Switcher """
+""" Poems: Poetry Shell Switcher """
 
 import os
 import re
@@ -9,7 +9,7 @@ from .environment import EnvVars
 
 
 def get_project_name(folder_name):
-    """ Returns name of a project given a Pipenv Environment folder """
+    """ Returns name of a project given a Poetry Environment folder """
     POETRY_FOLDER_PAT = r'^(.+)-[\w_-]{8}-py[2-9].[0-9]+$'
     match = re.search(POETRY_FOLDER_PAT, folder_name)
     return None if not match else match.group(1)

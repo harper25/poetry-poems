@@ -4,7 +4,7 @@ import os
 from pipenv_pipes.pipenv import (
     call_pipenv_venv,
     # call_python_version
-    # call_pipenv_shell,
+    # call_poetry_shell,
 )
 
 
@@ -30,7 +30,7 @@ def test_call_python_version(mock_env_home, project_names):
     """ Tested in test_core + cli  """
 
 @pytest.mark.skip
-def test_call_pipenv_shell(mock_env_home):
+def test_call_poetry_shell(mock_env_home):
     """ This does not guarantee the shell was launched successful,
     however it ensure it timed out, which means the command did went through
     and it was open for at least 5 seconds which means the shell was most
@@ -41,4 +41,4 @@ def test_call_pipenv_shell(mock_env_home):
     # import pdb; pdb.set_trace()
     # with pytest.raises(TimeoutExpired):
     # import pdb; pdb.set_trace()
-    # output = call_pipenv_shell(cwd=project_dir, timeout=5)
+    # output = call_poetry_shell(cwd=project_dir, timeout=5)
