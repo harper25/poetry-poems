@@ -4,29 +4,27 @@ import shutil
 import time
 from collections import namedtuple
 
-from .pipenv import call_python_version
+from .pipenv import call_python_version, call_poetry_env
 from .utils import (
     get_project_name,
     get_project_dir_filepath,
 )
 
 Environment = namedtuple('Environment', [
+    'project_path',
     'envpath',
     'envname',
     'project_name',
     'binpath',
-    ])
+    ])  # remove project_name?
 
 
 def find_poetry_projects(poems_file):
-    print()
-    print(poems_file)
     mode = 'r' if os.path.exists(poems_file) else 'a+'
-
     with open(poems_file, mode) as f:
-        project_folders = f.read()
-    project_folders = project_folders.splitlines()
-    return project_folders
+        project_paths = f.read()
+    project_paths = project_paths.splitlines()
+    return project_paths
 
 
 def add_new_poem(new_poem_path, project_names, poems_file):
@@ -37,7 +35,7 @@ def add_new_poem(new_poem_path, project_names, poems_file):
         f.write(f'{new_poem_path}\n')
 
 
-def find_environments(poetry_home):
+def find_environments_in_poetry_home(poetry_home):
     """
     Returns Environment NamedTuple created from list of folders found in the
     Poetry Environment location
@@ -50,9 +48,44 @@ def find_environments(poetry_home):
             continue
 
         binpath = find_binary(envpath)
-        environment = Environment(project_name=project_name,
+        environment = Environment(
+                                  project_path='',
+                                  project_name=project_name,
                                   envpath=envpath,
                                   envname=folder_name,
+                                  binpath=binpath,
+                                  )
+        environments.append(environment)
+    return environments
+
+
+# For .venv in project: poetry config --local virtualenvs.in-project true
+def find_environments(project_paths):
+    """
+    Returns Environment NamedTuple created from list of folders found in the
+    Poetry Environment location
+    """
+    environments = []
+    for project_path in project_paths:
+        # project_name = get_project_name(envpath)
+        project_name = os.path.split(project_path)
+        if not project_name or len(project_name) != 2:
+            continue
+
+        project_name = project_name[1]
+        virtualenv_output, code = call_poetry_env(project_path)
+        # raise EnvironmentError
+        print(virtualenv_output)
+
+        # For .venv in project: poetry config --local virtualenvs.in-project true
+        virtualenv_path = virtualenv_output.split()[0]
+
+        binpath = find_binary(virtualenv_path)
+        environment = Environment(
+                                  project_path=project_path,
+                                  project_name=project_name,
+                                  envpath=virtualenv_path,
+                                  envname=project_name,
                                   binpath=binpath,
                                   )
         environments.append(environment)

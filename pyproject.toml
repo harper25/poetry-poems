@@ -2,7 +2,7 @@
 name = "poetry-poems"
 version = "0.1.0"
 description = ""
-authors = ["Jakub Oles <jakub.oles@nielsen.com>"]
+authors = ["harper25 <olesjakubb@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"

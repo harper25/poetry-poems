@@ -17,6 +17,7 @@ from .pipenv import (
 )
 from .core import (
     find_environments,
+    find_environments_in_poetry_home,
     read_project_dir_file,
     write_project_dir_project_file,
     get_binary_version,
@@ -37,7 +38,6 @@ from .core import (
               help='Deletes the target Enviroment')
 @click.option('--verbose', '-v', is_flag=True, help='Verbose')
 @click.option('--version', is_flag=True, help='Show Version')
-@click.option('--_completion', is_flag=True)
 @click.option(
     '-p',
     '--poems_file',
@@ -51,7 +51,7 @@ from .core import (
               default=lambda: os.path.abspath(os.getcwd()),
               help='A path to a new poem.',)
 @click.pass_context
-def poems(ctx, envname, list_, verbose, version, delete, _completion, poems_file, add, new_poem_path):
+def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_poem_path):
     """
 
     Pipes - PipEnv Environment Switcher
@@ -80,17 +80,15 @@ def poems(ctx, envname, list_, verbose, version, delete, _completion, poems_file
     ensure_poetry_config_is_ok(poetry_config)
     ensure_env_vars_are_ok(env_vars)
 
-    project_folders = find_poetry_projects(poems_file)
-    print(project_folders)
+    project_paths = find_poetry_projects(poems_file)
+    print(project_paths)
 
-    environments = find_environments(poetry_config.poetry_home)
-    if not environments and not _completion:
+    environments = find_environments(project_paths)
+    # environments = find_environments_in_poetry_home(poetry_config.poetry_home)
+    if not environments:
         click.echo(
             'No poetry environments found in {}'.format(env_vars.PIPENV_HOME))
         sys.exit(1)
-
-    if _completion:
-        return [click.echo(e.envname) for e in environments]
 
     if verbose:
         click.echo('\nPOETRY_HOME: {}\n'.format(poetry_config.poetry_home))
@@ -101,7 +99,7 @@ def poems(ctx, envname, list_, verbose, version, delete, _completion, poems_file
 
     if add:
         ensure_project_dir_has_env(new_poem_path)
-        error_msg = add_new_poem(new_poem_path, project_folders, poems_file)
+        error_msg = add_new_poem(new_poem_path, project_paths, poems_file)
         if error_msg:
             click.echo(click.style(error_msg, fg='yellow'))
         sys.exit(0)
@@ -176,12 +174,11 @@ def print_project_list(environments, verbose):
     """ Prints Environments List """
 
     for index, environment in enumerate(environments):
-        project_dir = read_project_dir_file(environment.envpath)
+        project_dir = environment.project_path
         has_project_dir = bool(project_dir)
         name = click.style(environment.envname, fg='yellow')
         envpath = click.style(environment.envpath, fg='blue')
         binversion = get_binary_version(environment.envpath)
-        # binpath = click.style(environment.binpath, fg='blue')
         index = click.style(str(index), fg='red')
 
         entry = ' {}: {}'.format(index, name)

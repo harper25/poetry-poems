@@ -39,6 +39,11 @@ class EnvVars():
 
     def validate_environment(self):
 
+        # if self.POETRY_ACTIVE:
+        #     error = (
+        #         "Poetry Shell is already active. \n"
+        #         "Use 'exit' to close the shell before starting a new one.")
+
         if not os.path.exists(self.PIPENV_HOME):
             error = (
                 'Could not find Pipenv Environments location. [{}] \n'
