@@ -5,8 +5,6 @@
 import os
 import re
 
-from .environment import EnvVars
-
 
 def get_project_name(folder_name):
     """ Returns name of a project given a Poetry Environment folder """
@@ -24,18 +22,8 @@ def get_query_matches(environments, query):
     return matches
 
 
-def get_index_from_query(query):
-    """ Index should be passed as 1: """
-    pat = r'(\d+):$'
-    match = re.match(pat, query)
-    return None if not match else int(match.group(1))
-
-
 def collapse_path(path):
-    """ Replaces Home and WorkOn values in a path for their variable names """
-    envvars = EnvVars()
-    workon = envvars.PIPENV_HOME
+    """ Replaces Home value in a path for its variable name """
     home = os.path.expanduser("~")
-    path = path.replace(workon, '$PIPENV_HOME')
     path = path.replace(home, '~')
     return path

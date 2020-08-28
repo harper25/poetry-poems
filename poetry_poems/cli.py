@@ -79,13 +79,13 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_po
     ensure_env_vars_are_ok(env_vars)
 
     project_paths = find_poetry_projects(poems_file)
-    print(project_paths)
 
     environments = find_environments(project_paths)
     # environments = find_environments_in_poetry_home(poetry_config.poetry_home)
     if not environments:
         click.echo(
-            'No poetry environments found in {}'.format(env_vars.PIPENV_HOME))
+            f'No poetry environments (poems) found in poems file: {poems_file}\n'
+            'Please, add a new poem with a command: poems --add --path <path-to-your-poem>')
         sys.exit(1)
 
     if verbose:
@@ -195,7 +195,7 @@ def ensure_one_match(query, matches, environments):
     if not matches:
         msg = (
             "No matches for '{}'.\n"
-            "User 'pipes --list' to see a list of available environments."
+            "Use 'poems --list' to see a list of available environments."
             "".format(query))
         click.echo(click.style(msg, fg='red'))
         sys.exit(0)

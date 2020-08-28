@@ -74,7 +74,6 @@ def find_environments(project_paths):
         project_name = project_name[1]
         virtualenv_output, code = call_poetry_env(project_path)
         # raise EnvironmentError
-        print(virtualenv_output)
 
         # For .venv in project: poetry config --local virtualenvs.in-project true
         virtualenv_path = virtualenv_output.split()[0]
@@ -87,6 +86,7 @@ def find_environments(project_paths):
                                   envname=project_name,
                                   binpath=binpath,
                                   )
+        print(environment)
         environments.append(environment)
     return environments
 

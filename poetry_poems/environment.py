@@ -13,22 +13,11 @@ class EnvVars():
         self.IS_MAC = sys.platform == 'darwin'
         self.IS_LINUX = sys.platform == 'linux'
 
-        self.POETRY_ACTIVE = os.getenv('POETRY_ACTIVE', '')
-        self.VIRTUAL_ENV = os.getenv('VIRTUAL_ENV', '')
+        # self.HOME = os.getenv('HOME', '')
 
-        if self.IS_WINDOWS:
-            default_home = '~/.virtualenvs'
-        else:
-            default_home = os.path.join(
-                os.environ.get('XDG_DATA_HOME', '~/.local/share'),
-                'virtualenvs')
-
-        self.PIPENV_HOME = os.path.expanduser(
-            os.getenv('WORKON_HOME', default_home))
-
-        self.PIPENV_IS_ACTIVE = os.getenv('PIPENV_ACTIVE', '')
-        self.PIPENV_VENV_IN_PROJECT = os.getenv('PIPENV_VENV_IN_PROJECT', '')
-        self.VENV_IS_ACTIVE = os.getenv('VENV', '')
+        self.POETRY_IS_ACTIVE = os.getenv('POETRY_ACTIVE')
+        self.PIPENV_IS_ACTIVE = os.getenv('PIPENV_ACTIVE')
+        self.VENV_IS_ACTIVE = os.getenv('VENV') or os.getenv('VIRTUAL_ENV')
 
         try:
             import curses  # noqa flake8
@@ -39,31 +28,23 @@ class EnvVars():
 
     def validate_environment(self):
 
-        # if self.POETRY_ACTIVE:
+        if False:
+            pass
+        # if self.POETRY_IS_ACTIVE:
         #     error = (
         #         "Poetry Shell is already active. \n"
         #         "Use 'exit' to close the shell before starting a new one.")
-
-        if not os.path.exists(self.PIPENV_HOME):
-            error = (
-                'Could not find Pipenv Environments location. [{}] \n'
-                'If you are using a non-default location you will need to '
-                'add the path to $WORKON_HOME.'.format(self.PIPENV_HOME))
 
         elif self.PIPENV_IS_ACTIVE:
             error = (
                 "Pipenv Shell is already active. \n"
                 "Use 'exit' to close the shell before starting a new one.")
 
-        elif self.VENV_IS_ACTIVE:
-            error = (
-                "A Virtual environment is already active.\n"
-                "Use 'deactivate' to close disable the enviroment "
-                "before starting a new one.")
-
-        elif self.PIPENV_VENV_IN_PROJECT:
-            # Not necessarily.
-            error = 'PIPENV_VENV_IN_PROJECT is not supported at this time'
+        # elif self.VENV_IS_ACTIVE:
+        #     error = (
+        #         "A Virtual environment is already active.\n"
+        #         "Use 'deactivate' to close the enviroment "
+        #         "before starting a new one.")
 
         else:
             return
