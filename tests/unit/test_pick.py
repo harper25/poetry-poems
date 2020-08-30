@@ -7,10 +7,10 @@ LICENSE MIT
 """
 
 import pytest
-from collections import defaultdict
+# from collections import defaultdict
 
-from pipenv_pipes.picker import Picker
-from pipenv_pipes.picker.colors import colors
+from poetry_poems.picker import Picker
+# from poetry_poems.picker.colors import colors
 
 
 class TestPick():
@@ -19,7 +19,7 @@ class TestPick():
     def picker(self, environments):
         # Colors cannot be initialized outside of application
         # so let's replace color objects with a mock dict.
-        colors = defaultdict(str)
+        # colors = defaultdict(str)
         picker = Picker(environments)
         return picker
 

@@ -20,7 +20,7 @@ from .core import (
     find_environments_in_poetry_home,
     get_binary_version,
     delete_directory,
-    find_poetry_projects,
+    read_poetry_projects,
     add_new_poem
 )
 
@@ -78,7 +78,7 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_po
     ensure_poetry_config_is_ok(poetry_config)
     ensure_env_vars_are_ok(env_vars)
 
-    project_paths = find_poetry_projects(poems_file)
+    project_paths = read_poetry_projects(poems_file)
 
     environments = find_environments(project_paths)
     # environments = find_environments_in_poetry_home(poetry_config.poetry_home)

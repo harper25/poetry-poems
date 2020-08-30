@@ -1,47 +1,46 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-""" Tests for `pipenv_pipes` utils module."""
+""" Tests for `poetry_poems` utils module."""
+
+import os
 
 import pytest
 
-
-from pipenv_pipes.utils import (
+from poetry_poems.utils import (
     get_project_name,
     get_query_matches,
-    get_index_from_query,
+    collapse_path
 )
 
 
 @pytest.mark.utils
 @pytest.mark.parametrize("folder_name,expected", [
-    ("nonpipenvproject", None),
-    ("project1-1C_-wqgW", 'project1'),
-    ("something-with-dash-awrasdQW", 'something-with-dash'),
+    ("nonpoetryproject", None),
+    ("project1-wXuP3rRk-py3.8", 'project1'),
+    ("something-with-dash-edqXYkNx-py3.8", 'something-with-dash'),
 ])
 def test_get_project_name(folder_name, expected):
     assert get_project_name(folder_name) == expected
 
 
 @pytest.mark.utils
-@pytest.mark.parametrize("query,num_results,envs", [
-    ("proj", 2, pytest.lazy_fixture('environments')),
-    ("proj1", 1, pytest.lazy_fixture('environments')),
-    ("o", 4, pytest.lazy_fixture('environments')),
-    ("zzz", 0, pytest.lazy_fixture('environments')),
+@pytest.mark.parametrize("query,num_results", [
+    ("proj", 2),
+    ("proj1", 1),
+    ("o", 4),
+    ("zzz", 0),
 ])
-def test_get_query_matches(query, num_results, envs):
-    rv = get_query_matches(envs, query)
+def test_get_query_matches(query, num_results, environments):
+    rv = get_query_matches(environments, query)
     assert len(rv) == num_results
 
 
-@pytest.mark.utils
-@pytest.mark.parametrize("query,expected_index", [
-    ("1:", 1),
-    ("54:", 54),
-    ("123:23", None),
-    ("a:", None),
-    ("1", None),
-])
-def test_get_index_from_query(query, expected_index):
-    assert get_index_from_query(query) == expected_index
+def test_collapse_path():
+    home = os.path.expanduser("~")
+    full_path = os.path.join(home, "filename")
+    collapsed_path = collapse_path(full_path)
+
+    assert home in full_path
+    assert home not in collapsed_path
+    assert "~" in collapsed_path

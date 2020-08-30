@@ -18,7 +18,7 @@ Environment = namedtuple('Environment', [
     ])  # remove project_name?
 
 
-def find_poetry_projects(poems_file):
+def read_poetry_projects(poems_file):
     mode = 'r' if os.path.exists(poems_file) else 'a+'
     with open(poems_file, mode) as f:
         project_paths = f.read()
@@ -66,12 +66,11 @@ def find_environments(project_paths):
     """
     environments = []
     for project_path in project_paths:
-        # project_name = get_project_name(envpath)
         project_name = os.path.split(project_path)
         if not project_name or len(project_name) != 2:
             continue
 
-        project_name = project_name[1]
+        project_name = project_name[-1]
         virtualenv_output, code = call_poetry_env(project_path)
         # raise EnvironmentError
 

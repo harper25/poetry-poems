@@ -1,0 +1,8 @@
+[report]
+show_missing = True
+;fail_under = 75
+
+[run]
+branch = True
+omit =
+    tests/*
