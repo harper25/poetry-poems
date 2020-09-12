@@ -43,13 +43,12 @@ from .core import (
     default=lambda: f"{os.environ.get('HOME', '')}/.poetry-poems",
     help='A path to the file listing all poems.',
 )
-@click.option('--add', '-a', is_flag=True)
-@click.option('--path', '-p', 'new_poem_path',
-              type=click.Path(exists=True),
-              default=lambda: os.path.abspath(os.getcwd()),
-              help='A path to a new poem.',)
+@click.option('--add', '-a', 'new_poem_path',
+              type=click.Path(exists=False),
+              default="",
+              help='A path to a new poem.')
 @click.pass_context
-def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_poem_path):
+def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_path):
     """
 
     Poems - Poetry Environment Switcher
@@ -95,11 +94,14 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, add, new_po
         print_project_list(environments=environments, verbose=verbose)
         sys.exit(0)
 
-    if add:
+    if new_poem_path:
+        new_poem_path = parse_new_poem_path(new_poem_path)
+        ensure_path_exists(new_poem_path)
         ensure_project_dir_has_env(new_poem_path)
         error_msg = add_new_poem(new_poem_path, project_paths, poems_file)
         if error_msg:
             click.echo(click.style(error_msg, fg='yellow'))
+            sys.exit(1)
         sys.exit(0)
 
     matches = get_query_matches(environments, envname)
@@ -213,8 +215,7 @@ def ensure_one_match(query, matches, environments):
 def ensure_project_dir_has_env(project_dir):
     output, code = call_poetry_env(project_dir)
     if code == 0:
-        envpath = output
-        return envpath
+        return output
     else:
         click.echo(click.style(output, fg='red'), err=True)
         sys.exit(1)
@@ -236,6 +237,20 @@ def ensure_poetry_config_is_ok(poetry_config):
     error_msg = poetry_config.validate()
     if error_msg:
         click.echo(click.style(error_msg, fg='red'))
+        sys.exit(1)
+
+
+def parse_new_poem_path(poem_path):
+    if poem_path == ".":
+        poem_path = os.path.abspath(os.getcwd())
+    return poem_path
+
+
+def ensure_path_exists(path):
+    path_exists = os.path.exists(path)
+    if not path_exists:
+        error_msg = f"Path '{path}' does not exist."
+        click.echo(click.style(error_msg, fg='yellow'))
         sys.exit(1)
 
 
