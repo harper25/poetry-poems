@@ -7,22 +7,20 @@ import click
 import os
 
 from . import __version__
+from .core import (
+    add_new_poem,
+    delete_directory,
+    generate_environments,
+    read_poetry_projects
+)
 from .environment import EnvVars
 from .picker import Picker
-from .utils import get_query_matches, collapse_path
 from .poetry import (
+    call_poetry_env,
     call_poetry_shell,
-    PoetryConfig,
-    call_poetry_env
+    PoetryConfig
 )
-from .core import (
-    find_environments,
-    find_environments_in_poetry_home,
-    get_binary_version,
-    delete_directory,
-    read_poetry_projects,
-    add_new_poem
-)
+from .utils import collapse_path, get_query_matches
 
 
 @click.command()
@@ -79,11 +77,11 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
 
     project_paths = read_poetry_projects(poems_file)
 
-    environments = find_environments(project_paths)
-    # environments = find_environments_in_poetry_home(poetry_config.poetry_home)
+    environments = generate_environments(project_paths)
+
     if not environments:
         click.echo(
-            f'No poetry environments (poems) found in poems file: {poems_file}\n'
+            f'No poetry environments (poems) found in poems file: {collapse_path(poems_file)}\n'
             'Please, add a new poem with a command: poems --add --path <path-to-your-poem>')
         sys.exit(1)
 
@@ -128,16 +126,14 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
 
 def launch_env(environment):
     """ Launch Poetry Shell """
-
-    project_dir = environment.project_path
     msg_dir = click.style(
-        "Project directory: '{}'".format(project_dir), fg='yellow')
+        f"Project directory: '{collapse_path(environment.project_path)}'", fg='yellow')
     msg_env = click.style(
-        "Environment: '{}'".format(environment.envpath), fg='yellow')
+        f"Environment: '{collapse_path(environment.envpath)}'", fg='yellow')
     click.echo(msg_dir)
     click.echo(msg_env)
 
-    call_poetry_shell(cwd=project_dir, envname=environment.envname)
+    call_poetry_shell(cwd=environment.project_path, envname=environment.envname)
 
     msg = 'Terminating Poems Shell...'
     click.echo(click.style(msg, fg='red'))
@@ -153,36 +149,23 @@ def do_pick(environments, query=None):
 def print_project_list(environments, verbose):
     """ Prints Environments List """
 
-    for index, environment in enumerate(environments):
-        project_dir = environment.project_path
-        has_project_dir = bool(project_dir)
+    for environment in environments:
         name = click.style(environment.envname, fg='yellow')
-        envpath = click.style(environment.envpath, fg='blue')
-        binversion = get_binary_version(environment.envpath)
-        index = click.style(str(index), fg='red')
+        name = f'{name} *'
 
-        entry = ' {}: {}'.format(index, name)
-        if has_project_dir:
-            entry += ' *'
-            project_dir = click.style(project_dir, fg='blue')
-        else:
-            project_dir = click.style('[ NOT SET ]', fg='red')
-
-        entry = name if not has_project_dir else name + ' *'
         if not verbose:
-            click.echo(entry)
+            click.echo(name)
         else:
+            envpath = click.style(environment.envpath, fg='blue')
+            binversion = environment.binversion
+            project_path = click.style(environment.project_path, fg='blue')
+
             click.echo(
-                '{entry}\n'
-                '    Environment: \t {envpath}\n'
-                '    Binary: \t\t {binversion}\n'
-                '    Project Dir: \t {project_dir}\n'
-                .format(
-                    entry=entry,
-                    envpath=collapse_path(envpath),
-                    project_dir=collapse_path(project_dir),
-                    binversion=binversion,
-                    ))
+                f'{name}\n'
+                f'    Environment: \t {collapse_path(envpath)}\n'
+                f'    Binary: \t\t {binversion}\n'
+                f'    Project Dir: \t {collapse_path(project_path)}\n'
+            )
 
 
 def ensure_one_match(query, matches, environments):

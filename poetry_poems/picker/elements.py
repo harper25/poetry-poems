@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from ..utils import collapse_path
-from ..core import get_binary_version
 from .colors import colors
 
 
@@ -25,6 +24,7 @@ class Line():
         screen.addnstr(y, x, self.text, max_width, color_pair)
 
 
+# Refactor here <- ->
 class EnvLine(Line):
 
     SELECTED_STR = '●'
@@ -52,8 +52,7 @@ class EnvLine(Line):
             else:
                 text = self.env.envname
         if self.expanded == 1:
-            binpath = get_binary_version(self.env.envpath)
-            text = '{} ({})'.format(self.env.envname, binpath)
+            text = '{} ({})'.format(self.env.envname, self.env.binpath)
         if self.expanded == 2:
             text = collapse_path(self.env.envpath)
         if self.expanded == 3:
