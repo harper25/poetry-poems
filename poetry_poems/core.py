@@ -1,7 +1,5 @@
 
 import os
-import shutil
-import time
 
 from .poetry import call_python_version, call_poetry_env
 
@@ -109,15 +107,9 @@ def generate_environments(project_paths):
     return environments
 
 
-def delete_directory(envpath):
-    """ Deletes the enviroment by its path """
-    attempt = 0
-    while attempt < 5:
-        try:
-            shutil.rmtree(envpath)
-        except (FileNotFoundError, OSError):
-            pass
-        if not os.path.exists(envpath):
-            return True
-        attempt += 1
-        time.sleep(0.25)
+def delete_poem_from_poems_file(project_path_to_delete, project_paths, poems_file):
+    """ Delete the poem from paths saved in poems file """
+    project_paths.remove(project_path_to_delete)
+
+    with open(poems_file, 'w') as f:
+        f.write('\n'.join(project_paths) + '\n')

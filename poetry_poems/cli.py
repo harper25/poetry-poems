@@ -9,7 +9,7 @@ import os
 from . import __version__
 from .core import (
     add_new_poem,
-    delete_directory,
+    delete_poem_from_poems_file,
     generate_environments,
     read_poetry_projects
 )
@@ -114,17 +114,16 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
 
     if delete:
         if not click.confirm(
-            "Are you sure you want to delete '{}'".format(environment.envpath),
+            f"Are you sure you want to delete: '{environment.project_path}' from poems file?",
             default=False
         ):
-            click.echo('Environment not deleted')
-            sys.exit(0)
-        if delete_directory(environment.envpath):
-            msg = "Environment '{}' deleted".format(environment.envname)
+            msg = 'Poem not deleted'
             click.echo(click.style(msg, fg='yellow'))
-        else:
-            msg = 'Could not delete enviroment {}'.format(environment.envpath)
-            click.echo(click.style(msg, fg='red'))
+            sys.exit(0)
+
+        delete_poem_from_poems_file(environment.project_path, project_paths, poems_file)
+        msg = f"Poem '{environment.envname}' deleted from poems file"
+        click.echo(click.style(msg, fg='yellow'))
         sys.exit(0)
 
     else:
@@ -218,11 +217,6 @@ def ensure_project_dir_has_env(project_dir):
         sys.exit(1)
 
 
-def ensure_valid_index(env_index, environments):
-    if env_index not in range(0, len(environments)):
-        raise click.UsageError('Invalid Environment Index')
-
-
 def ensure_env_vars_are_ok(env_vars):
     error_msg = env_vars.validate_environment()
     if error_msg:
@@ -248,14 +242,6 @@ def ensure_path_exists(path):
     if not path_exists:
         error_msg = f"Path '{path}' does not exist."
         click.echo(click.style(error_msg, fg='yellow'))
-        sys.exit(1)
-
-
-def get_or_exit(output, code):
-    if code == 0:
-        return output
-    else:
-        click.echo(click.style(output, fg='red'), err=True)
         sys.exit(1)
 
 
