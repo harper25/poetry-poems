@@ -20,17 +20,20 @@ class Environment:
             f'Environment(project_name={self.project_name}, '
             f'project_path={self.project_path}, '
             f'envname={self.envname}, '
-            f'envpath={self.envpath}, '
-            f'binpath={self.binpath}, '
-            f'binversion={self.binversion})'
+            f'envpath={self._envpath}, '
+            f'binpath={self._binpath}, '
+            f'binversion={self._binversion})'
         )
+
+    def __eq__(self, other):
+        return str(self) == str(other)
 
     # For .venv in project: poetry config --local virtualenvs.in-project true
     @property
     def envpath(self):
         if self._envpath is None:
             virtualenv_output, code = call_poetry_env(self.project_path)
-            if code != 0:
+            if code != 0 or not virtualenv_output:
                 raise(EnvironmentError(f'No virtual environment associated with project: {self.project_path}'))
             self._envpath = virtualenv_output.split()[0]
         return self._envpath
@@ -51,7 +54,7 @@ class Environment:
                 self._binpath = binpath
             else:
                 raise EnvironmentError(
-                    f'could not find python binary: {self._binpath}')
+                    f'could not find python binary: {binpath}')
 
         return self._binpath
 

@@ -81,8 +81,8 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
 
     if not environments:
         click.echo(
-            f'No poetry environments (poems) found in poems file: {collapse_path(poems_file)}\n'
-            'Please, add a new poem with a command: poems --add --path <path-to-your-poem>')
+            f'No poems found in poems file: {collapse_path(poems_file)}\n'
+            'Please, add a new poem with a command: poems --add <path-to-your-poem>')
         sys.exit(1)
 
     if verbose:
@@ -93,6 +93,9 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
         sys.exit(0)
 
     if new_poem_path:
+        # poems --add .
+        # poems --add $(pwd)
+        # poems --add $PWD
         new_poem_path = parse_new_poem_path(new_poem_path)
         ensure_path_exists(new_poem_path)
         ensure_project_dir_has_env(new_poem_path)
@@ -121,6 +124,7 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
         sys.exit(0)
 
     else:
+        ensure_project_dir_has_env(environment.project_path)
         launch_env(environment)
 
 
@@ -156,8 +160,13 @@ def print_project_list(environments, verbose):
         if not verbose:
             click.echo(name)
         else:
-            envpath = click.style(environment.envpath, fg='blue')
-            binversion = environment.binversion
+            try:
+                envpath = click.style(environment.envpath, fg='blue')
+                binversion = environment.binversion
+            except EnvironmentError:
+                envpath = click.style('-- Not configured --', fg='red')
+                binversion = click.style('-- Not configured --', fg='red')
+
             project_path = click.style(environment.project_path, fg='blue')
 
             click.echo(
@@ -197,10 +206,11 @@ def ensure_one_match(query, matches, environments):
 
 def ensure_project_dir_has_env(project_dir):
     output, code = call_poetry_env(project_dir)
-    if code == 0:
+    if code == 0 and output:
         return output
     else:
-        click.echo(click.style(output, fg='red'), err=True)
+        msg = f'No virtualenv associated with the project: {project_dir}'
+        click.echo(click.style(msg, fg='red'), err=True)
         sys.exit(1)
 
 
