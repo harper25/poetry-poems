@@ -2,55 +2,115 @@
 
 import pytest  # noqa: F401
 import os
-from tempfile import mkdtemp
 
-from pipenv_pipes.core import (
-    find_environments,
-    find_binary,
-    get_binary_version,
-    delete_directory,
+from poetry_poems.core import (
+    add_new_poem,
+    delete_poem_from_poems_file,
+    generate_environments,
+    read_poetry_projects,
 )
 
 
-class TestFindEnvironments():
+def test_add_new_poem_already_saved(project_paths, poems_file):
+    new_poem_path = project_paths[0]
+    result = add_new_poem(new_poem_path, project_paths, poems_file)
+    assert result == "Project already saved in poems!"
 
-    def test_find_environments(self, mock_env_home):
-        pipenv_home, mock_projects_dir = mock_env_home
-        # Add a non env to mock projects ensure it's not picked up
-        os.makedirs(os.path.join(pipenv_home, 'notanenv'))
-        environments = find_environments(pipenv_home)
-        assert len(environments) == 2
-        assert 'proj1' in [e.project_name for e in environments]
 
-    def test_find_environments_empty(self, temp_folder):
-        """ Environment could be empty """
-        environments = find_environments(temp_folder)
-        assert len(environments) == 0
+def test_add_new_poem_invalid_paths(project_paths, poems_file):
+    new_poem_path = f"{project_paths}/new_nested_project"
+    result = add_new_poem(new_poem_path, project_paths, poems_file)
+    assert "The new path belongs to already saved project" in result
 
-    def test_delete_directory(self):
-        """ Ensure delete directory  """
-        temp_folder = mkdtemp()
-        assert os.path.isdir(temp_folder)
-        assert delete_directory(temp_folder)
-        assert not os.path.exists(temp_folder)
 
-    def test_find_environments_does_not_exit(self):
-        """ Invalid Folder. CLI Entry should catch, core func should fail """
-        with pytest.raises(IOError):
-            find_environments('/fakedir/')
+def test_add_new_poem(project_paths, poems_file):
+    new_poem_path = "/my_repos/new_project"
+    result = add_new_poem(new_poem_path, project_paths, poems_file)
+    assert result is None
 
-    def test_find_binary(self, mock_env_home, temp_folder):
-        pipenv_home, mock_projects_dir = mock_env_home
-        envname = os.listdir(pipenv_home)[0]
-        envpath = os.path.join(pipenv_home, envname)
-        binpath = find_binary(envpath)
-        assert 'python' in binpath
-        assert envpath in binpath
-        with pytest.raises(EnvironmentError):
-            find_binary(temp_folder)
+    with open(poems_file, "r") as f:
+        saved_projects = f.read()
+        saved_projects = saved_projects.splitlines()
+    assert saved_projects == project_paths + [new_poem_path]
 
-    def test_get_python_version(self, mock_env_home, temp_folder):
-        pipenv_home, mock_projects_dir = mock_env_home
-        envname = os.listdir(pipenv_home)[0]
-        envpath = os.path.join(pipenv_home, envname)
-        assert 'Python' in get_binary_version(envpath)
+
+def test_read_poetry_projects(project_paths, poems_file):
+    assert read_poetry_projects(poems_file) == project_paths
+
+
+def test_delete_poem_from_poems_file(project_paths, poems_file):
+    delete_poem_from_poems_file(
+        project_paths[0],
+        list(project_paths),
+        poems_file
+    )
+
+    with open(poems_file, "r") as f:
+        saved_projects = f.read()
+        saved_projects = saved_projects.splitlines()
+    assert saved_projects == project_paths[1:]
+
+
+def test_generate_environments(project_paths, simple_environments):
+    environments = generate_environments(project_paths)
+    assert environments[:2] == simple_environments
+
+
+def test_environment_no_envpath(simple_environments):
+    env = simple_environments[0]
+    with pytest.raises(EnvironmentError) as e:
+        env.envpath
+    assert 'No virtual environment associated with project' in str(e)
+
+
+def test_environment_no_binpath(simple_environments):
+    env = simple_environments[0]
+    fake_envpath = os.path.join(env.project_path, 'envpath')
+    os.makedirs(fake_envpath)
+    env._envpath = fake_envpath
+    with pytest.raises(EnvironmentError) as e:
+        env.binpath
+    assert 'could not find python binary path' in str(e)
+
+
+def test_environment_binpath(simple_environments):
+    env = simple_environments[0]
+    fake_envpath = os.path.join(env.project_path, 'envpath')
+    fake_binpath = os.path.join(fake_envpath, 'bin/python')
+    os.makedirs(fake_binpath)
+    env._envpath = fake_envpath
+    assert env.binpath == fake_binpath
+
+
+@pytest.mark.parametrize("venv_path", ['bin', 'Scripts'])
+def test_environment_python_binary_missing(venv_path, simple_environments):
+    env = simple_environments[0]
+    fake_envpath = os.path.join(env.project_path, 'envpath')
+    invalid_fake_binpath = os.path.join(fake_envpath, venv_path)
+    os.makedirs(invalid_fake_binpath)
+    env._envpath = fake_envpath
+    with pytest.raises(EnvironmentError) as e:
+        env.binpath
+    assert 'could not find python binary' in str(e)
+
+
+def test_environment_python_binversion_error(simple_environments):
+    env = simple_environments[0]
+    fake_envpath = os.path.join(env.project_path, 'envpath')
+    intermediate_path = os.path.join(fake_envpath, 'bin')
+    os.makedirs(intermediate_path)
+    fake_binpath = os.path.join(intermediate_path, 'python')
+    open(fake_binpath, 'w').close()
+    env._envpath = fake_envpath
+    env._binpath = fake_binpath
+    with pytest.raises(EnvironmentError) as e:
+        env.binversion
+    assert 'Permission denied' in str(e)
+
+
+def test_environment_python_binversion(simple_environments, venv_fresh):
+    env = simple_environments[0]
+    fake_envpath = venv_fresh
+    env._envpath = fake_envpath
+    env._binpath = os.path.join(fake_envpath, 'bin/python')
+    assert 'Python' in env.binversion

@@ -1,6 +1,6 @@
 [report]
 show_missing = True
-;fail_under = 75
+fail_under = 70
 
 [run]
 branch = True

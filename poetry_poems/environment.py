@@ -28,23 +28,21 @@ class EnvVars():
 
     def validate_environment(self):
 
-        if False:
-            pass
-        # if self.POETRY_IS_ACTIVE:
-        #     error = (
-        #         "Poetry Shell is already active. \n"
-        #         "Use 'exit' to close the shell before starting a new one.")
+        if self.POETRY_IS_ACTIVE:
+            error = (
+                "Poetry Shell is already active. \n"
+                "Use 'exit' to close the shell before starting a new one.")
 
         elif self.PIPENV_IS_ACTIVE:
             error = (
                 "Pipenv Shell is already active. \n"
                 "Use 'exit' to close the shell before starting a new one.")
 
-        # elif self.VENV_IS_ACTIVE:
-        #     error = (
-        #         "A Virtual environment is already active.\n"
-        #         "Use 'deactivate' to close the enviroment "
-        #         "before starting a new one.")
+        elif self.VENV_IS_ACTIVE:
+            error = (
+                "Virtual environment is already active.\n"
+                "Use 'deactivate' to close the enviroment "
+                "before starting a new one.")
 
         else:
             return
