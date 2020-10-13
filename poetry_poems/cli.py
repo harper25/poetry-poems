@@ -45,8 +45,9 @@ from .utils import collapse_path, get_query_matches
               type=click.Path(exists=False),
               default="",
               help='A path to a new poem.')
+@click.option('--_completion', is_flag=True)
 @click.pass_context
-def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_path):
+def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_path, _completion):
     """
 
     Poems - Poetry Environment Switcher
@@ -79,11 +80,14 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
 
     environments = generate_environments(project_paths)
 
-    if not environments:
+    if not environments and not _completion:
         click.echo(
             f'No poems found in poems file: {collapse_path(poems_file)}\n'
             'Please, add a new poem with a command: poems --add <path-to-your-poem>')
         sys.exit(1)
+
+    if _completion:
+        return [click.echo(e.project_name) for e in environments]
 
     if verbose:
         click.echo('\nPOETRY_HOME: {}\n'.format(poetry_config.poetry_home))
