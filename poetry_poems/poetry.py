@@ -52,7 +52,7 @@ def call_python_version(pybinpath):
 
 def call_poetry_env(project_dir):
     """ Calls ``poetry env`` from a given project directory """
-    output, code = PipedPopen(cmds=['poetry', 'env', 'info', '-p'], cwd=project_dir)
+    output, code = PipedPopen(cmds=['poetry', 'env', 'list', '--full-path'], cwd=project_dir)
     return output, code
 
 

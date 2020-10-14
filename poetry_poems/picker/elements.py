@@ -52,9 +52,15 @@ class EnvLine(Line):
             else:
                 text = self.env.envname
         if self.expanded == 1:
-            text = '{} ({})'.format(self.env.envname, self.env.binpath)
+            try:
+                text = '{} ({})'.format(self.env.envname, self.env.binpath)
+            except EnvironmentError as e:
+                text = str(e)
         if self.expanded == 2:
-            text = collapse_path(self.env.envpath)
+            try:
+                text = collapse_path(self.env.envpath)
+            except EnvironmentError as e:
+                text = str(e)
         if self.expanded == 3:
             text = project_dir
 

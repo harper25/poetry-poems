@@ -210,7 +210,7 @@ def ensure_one_match(query, matches, environments):
 def ensure_project_dir_has_env(project_dir):
     output, code = call_poetry_env(project_dir)
     if code == 0 and output:
-        return output
+        return output.split()[0]
     else:
         msg = f'No virtualenv associated with the project: {project_dir}'
         click.echo(click.style(msg, fg='red'), err=True)
