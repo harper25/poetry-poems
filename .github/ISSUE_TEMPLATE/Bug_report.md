@@ -22,7 +22,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Environment:**
  - OS: [e.g. iOS]
- - Pipes Version [e.g. 22]
+ - Poems Version [e.g. 22]
 
 **Additional context**
 Add any other context about the problem here.

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-""" Pipes: Pipenv Shell Switcher """
+""" Poems: Poetry Shell Switcher """
 
-__author__ = """Gui Talarico"""
-__version__ = '0.7.1'
-__email__ = 'gui.talarico+pip@gmail.com'
-__url__ = 'github.com/gtalarico/pipenv-pipes'
+__author__ = """Jakub Oles"""
+__version__ = '0.1.0'
+__email__ = 'olesjakubb+poems@gmail.com'
+__url__ = 'https://github.com/harper25/poetry-poems'
