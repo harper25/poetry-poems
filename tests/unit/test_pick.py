@@ -1,4 +1,4 @@
-#-*-coding:utf-8-*-
+# -*-coding:utf-8-*-
 
 """
 Modified from https://github.com/wong2/pick/
@@ -7,14 +7,15 @@ LICENSE MIT
 """
 
 import pytest
-# from collections import defaultdict
 
 from poetry_poems.picker import Picker
+
+# from collections import defaultdict
+
 # from poetry_poems.picker.colors import colors
 
 
-class TestPick():
-
+class TestPick:
     @pytest.fixture
     def picker(self, environments):
         # Colors cannot be initialized outside of application
@@ -47,7 +48,7 @@ class TestPick():
     def test_get_lines(self, picker, environments):
         rv = picker.get_option_lines()
         assert len(rv) == len(environments)
-        assert hasattr(rv[0], 'render')
+        assert hasattr(rv[0], "render")
         assert picker.get_title_lines()
 
     def test_get_current_line(self, picker):

@@ -3,8 +3,9 @@ import curses
 from collections import OrderedDict
 
 
-class Color():
+class Color:
     """ Curses Color Class """
+
     TRANSPARENT = -1
 
     def __init__(self, index, fg, bg):
@@ -16,7 +17,7 @@ class Color():
         return curses.color_pair(self.index)
 
 
-class Colors():
+class Colors:
 
     CONSTANTS = OrderedDict(
         # Index Zero causes exception on windows
@@ -43,7 +44,7 @@ class Colors():
     def __getitem__(self, key):
         if self._colors:
             return self._colors[key]
-        raise RuntimeError('Colors is not initialized')
+        raise RuntimeError("Colors is not initialized")
 
 
 colors = Colors()

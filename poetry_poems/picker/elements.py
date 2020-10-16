@@ -3,7 +3,7 @@ from ..utils import collapse_path
 from .colors import colors
 
 
-class Line():
+class Line:
 
     RIGHT_MARGIN = 2
 
@@ -14,7 +14,7 @@ class Line():
 
     @property
     def text(self):
-        return ' ' * self.pad + self._text
+        return " " * self.pad + self._text
 
     def render(self, screen, x, y):
         max_y, max_x = screen.getmaxyx()
@@ -26,14 +26,14 @@ class Line():
 
 class EnvLine(Line):
 
-    SELECTED_STR = '●'
-    UNSELECTED_STR = ' ' * len(SELECTED_STR)
-    UNSET_DIR_STR = '-- Not Set --'
+    SELECTED_STR = "●"
+    UNSELECTED_STR = " " * len(SELECTED_STR)
+    UNSET_DIR_STR = "-- Not Set --"
 
     def __init__(self, env=None, **kwargs):
         self.env = env
-        self.selected = kwargs.pop('selected')
-        self.expanded = kwargs.pop('expanded')
+        self.selected = kwargs.pop("selected")
+        self.expanded = kwargs.pop("expanded")
         super().__init__(env.envname, **kwargs)
 
     @property
@@ -45,10 +45,10 @@ class EnvLine(Line):
             if self.expanded == 0:
                 pass
             if self.expanded == 1:
-                text = f'{text} ({self.env.binpath})'
+                text = f"{text} ({collapse_path(self.env.envpath)})"
             if self.expanded == 2:
-                text = f'{text} ({collapse_path(self.env.envpath)})'
+                text = f"{text} ({collapse_path(self.env.binpath)})"
         except EnvironmentError as e:
-            text = f'{text} ({str(e)})'
+            text = f"{text} ({str(e)})"
 
-        return '{prefix} {text}'.format(prefix=prefix, text=text)
+        return f"{prefix} {text}"

@@ -6,42 +6,40 @@ Pick - create curses based interactive selection list in the terminal
 LICENSE MIT
 """
 
-import re
-import sys
 import curses
 import json
+import re
+import sys
 from itertools import cycle
 
 from .colors import colors
-from .elements import Line, EnvLine
+from .elements import EnvLine, Line
 from .keys import (
-    KEYS_UP,
-    KEYS_DOWN,
-    KEYS_ENTER,
-    KEYS_CLEAR,
     KEYS_BACKSPACE,
+    KEYS_CLEAR,
+    KEYS_DOWN,
+    KEYS_END,
+    KEYS_ENTER,
     KEYS_ESCAPE,
     KEYS_HOME,
-    KEYS_END,
-    KEYS_RIGHT,
     KEYS_LEFT,
+    KEYS_RIGHT,
+    KEYS_UP,
 )
 
+__all__ = ["Picker"]
 
-__all__ = ['Picker']
-
-OPTION_COLOR = 'WHITE'
-SELECTED_OPTION = 'YELLOW'
-TITLE_COLOR = 'BLUE'
-IS_TESTING = 'pytest' in sys.modules
+OPTION_COLOR = "WHITE"
+SELECTED_OPTION = "YELLOW"
+TITLE_COLOR = "BLUE"
+IS_TESTING = "pytest" in sys.modules
 
 
 class Picker(object):
-
-    def __init__(self, environments, query='', debug_mode=False):
+    def __init__(self, environments, query="", debug_mode=False):
 
         if not environments:
-            raise ValueError('invalid environments value')
+            raise ValueError("invalid environments value")
 
         self._environments = environments
         self.query = query
@@ -52,7 +50,7 @@ class Picker(object):
         self.expand_next()
 
     def config_curses(self):
-        curses.curs_set(0)           # hide the cursor
+        curses.curs_set(0)  # hide the cursor
         colors.initialize()
 
     def _start(self, screen):
@@ -62,10 +60,12 @@ class Picker(object):
 
     def start(self):
         if IS_TESTING:
-            data = json.dumps({
-                'query': self.query,
-                'envs': len(self.environments),
-                })
+            data = json.dumps(
+                {
+                    "query": self.query,
+                    "envs": len(self.environments),
+                }
+            )
             raise SystemExit(data)
         return curses.wrapper(self._start)
 
@@ -90,10 +90,10 @@ class Picker(object):
         # self.clear_query()
 
     def clear_query(self):
-        self.query = ''
+        self.query = ""
 
     def expand_next(self):
-        if not hasattr(self, '_cycle'):
+        if not hasattr(self, "_cycle"):
             self._cycle = cycle(self.CYCLES)
         self.expanded = next(self._cycle)
 
@@ -107,8 +107,7 @@ class Picker(object):
     @property
     def environments(self):
         if self.query:
-            return [e for e in self._environments
-                    if self.query in e.envname.lower()]
+            return [e for e in self._environments if self.query in e.envname.lower()]
         else:
             return self._environments
 
@@ -122,20 +121,17 @@ class Picker(object):
             else:
                 color = OPTION_COLOR
             line = EnvLine(
-                env=environment,
-                color=color,
-                selected=is_selected,
-                expanded=self.expanded)
+                env=environment, color=color, selected=is_selected, expanded=self.expanded
+            )
             lines.append(line)
         return lines
 
     def get_title_lines(self):
-        title = 'Poetry Environments'
+        title = "Poetry Environments"
         title_line = Line(title, color=TITLE_COLOR, pad=2)
-        bar_line = Line('-' * len(title), color=TITLE_COLOR, pad=2)
-        blank_line = Line('')
-        return [
-            blank_line, title_line, bar_line, blank_line]
+        bar_line = Line("-" * len(title), color=TITLE_COLOR, pad=2)
+        blank_line = Line("")
+        return [blank_line, title_line, bar_line, blank_line]
 
     def get_lines(self):
         title_lines = self.get_title_lines()
@@ -157,7 +153,7 @@ class Picker(object):
         max_rows = max_y - pad_top - pad_bottom
         max_cols = max_x - pad_right
         if max_y < 5 or max_x < 10:
-            self.screen.addnstr(0, 0, 'Help!', max_cols)
+            self.screen.addnstr(0, 0, "Help!", max_cols)
             return
 
         lines, current_line = self.get_lines()
@@ -172,7 +168,7 @@ class Picker(object):
             y += 1
 
         last_line = len(visible_lines) + 1
-        query = Line('$ {}'.format(self.query), color=SELECTED_OPTION)
+        query = Line(f"$ {self.query}", color=SELECTED_OPTION)
         query.render(self.screen, x=pad_left, y=last_line)
 
         if debug_info:
@@ -181,12 +177,11 @@ class Picker(object):
         self.screen.refresh()
 
     def print_debug_info(self, debug_info):
-        key = debug_info.get('key')
-        char = '' if not key else repr(chr(key))
+        key = debug_info.get("key")
+        char = "" if not key else repr(chr(key))
         query = repr(self.query)
         index = self.index
-        text = "key: '{}' | char: '{}' | index: '{}' | query: '{}'".format(
-            key, char, index, query)
+        text = f"key: '{key}' | char: '{char}' | index: '{index}' | query: '{query}'"
         max_y, max_x = self.screen.getmaxyx()
         pos_y = max_y - 1
         pos_x = 0
@@ -205,7 +200,7 @@ class Picker(object):
 
             if self.debug_mode and key > 0:
                 # when stretching windows, key = -1
-                debug_info = {'key': key}
+                debug_info = {"key": key}
 
             if key in KEYS_ESCAPE:
                 sys.exit(0)
@@ -215,7 +210,7 @@ class Picker(object):
                     continue
                 return self.get_selected()
 
-            if re.search(r'[A-Za-z0-9\s\-_]', key_string):
+            if re.search(r"[A-Za-z0-9\s\-_]", key_string):
                 self.query += key_string
                 self.expanded = 0
                 for n, environment in enumerate(self.environments):

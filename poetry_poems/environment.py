@@ -6,18 +6,17 @@ import os
 import sys
 
 
-class EnvVars():
-
+class EnvVars:
     def __init__(self):
-        self.IS_WINDOWS = sys.platform == 'win32'
-        self.IS_MAC = sys.platform == 'darwin'
-        self.IS_LINUX = sys.platform == 'linux'
+        self.IS_WINDOWS = sys.platform == "win32"
+        self.IS_MAC = sys.platform == "darwin"
+        self.IS_LINUX = sys.platform == "linux"
 
         # self.HOME = os.getenv('HOME', '')
 
-        self.POETRY_IS_ACTIVE = os.getenv('POETRY_ACTIVE')
-        self.PIPENV_IS_ACTIVE = os.getenv('PIPENV_ACTIVE')
-        self.VENV_IS_ACTIVE = os.getenv('VENV') or os.getenv('VIRTUAL_ENV')
+        self.POETRY_IS_ACTIVE = os.getenv("POETRY_ACTIVE")
+        self.PIPENV_IS_ACTIVE = os.getenv("PIPENV_ACTIVE")
+        self.VENV_IS_ACTIVE = os.getenv("VENV") or os.getenv("VIRTUAL_ENV")
 
         try:
             import curses  # noqa flake8
@@ -31,18 +30,21 @@ class EnvVars():
         if self.POETRY_IS_ACTIVE:
             error = (
                 "Poetry Shell is already active. \n"
-                "Use 'exit' to close the shell before starting a new one.")
+                "Use 'exit' to close the shell before starting a new one."
+            )
 
         elif self.PIPENV_IS_ACTIVE:
             error = (
                 "Pipenv Shell is already active. \n"
-                "Use 'exit' to close the shell before starting a new one.")
+                "Use 'exit' to close the shell before starting a new one."
+            )
 
         elif self.VENV_IS_ACTIVE:
             error = (
                 "Virtual environment is already active.\n"
                 "Use 'deactivate' to close the enviroment "
-                "before starting a new one.")
+                "before starting a new one."
+            )
 
         else:
             return

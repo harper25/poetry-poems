@@ -2,10 +2,11 @@
 here: https://github.com/manahl/pytest-plugins/issues/40
 """
 
-import pytest  # noqa
 import os
+import time  # noqa: F401
 from tempfile import TemporaryDirectory
-import time
+
+import pytest  # noqa
 
 
 @pytest.fixture
@@ -13,8 +14,8 @@ def tempdir():
     _cwd = os.getcwd()
     with TemporaryDirectory() as path:
         os.chdir(path)
-        os.makedirs('folder')
-        folderpath = os.path.join(os.getcwd(), 'folder')
+        os.makedirs("folder")
+        folderpath = os.path.join(os.getcwd(), "folder")
         yield folderpath
         os.chdir(_cwd)
 

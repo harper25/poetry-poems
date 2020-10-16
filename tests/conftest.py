@@ -1,14 +1,13 @@
-import pytest
 import os
-from subprocess import Popen, PIPE
-from contextlib import contextmanager
-from tempfile import TemporaryDirectory
 import tempfile
+from contextlib import contextmanager
+from subprocess import PIPE, Popen
+from tempfile import TemporaryDirectory
+
+import pytest
 from click.testing import CliRunner
 
-from poetry_poems.core import (
-    Environment
-)
+from poetry_poems.core import Environment
 from poetry_poems.environment import EnvVars
 
 HERE = os.path.dirname(__file__)
@@ -18,7 +17,7 @@ def touch(filename):
     try:
         os.utime(filename, None)
     except OSError:
-        open(filename, 'a').close()
+        open(filename, "a").close()
 
 
 @pytest.fixture
@@ -26,12 +25,12 @@ def env_vars():
     return EnvVars()
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def venv_fresh():
     with TemporaryDirectory() as folder:
-        venv_cmd = 'virtualenv --no-pip --no-wheel --no-setuptools'
-        cmd = f'{venv_cmd} {folder}'
-        proc = Popen(cmd.split(' '), stderr=PIPE, stdout=PIPE)
+        venv_cmd = "virtualenv --no-pip --no-wheel --no-setuptools"
+        cmd = f"{venv_cmd} {folder}"
+        proc = Popen(cmd.split(" "), stderr=PIPE, stdout=PIPE)
         out, err = proc.communicate()
         if err:
             raise Exception(err)
@@ -45,25 +44,25 @@ def win_tempdir(env_vars):
     # On other systems this will be none, so default env will be used
     if not env_vars.IS_WINDOWS:
         return None
-    path = os.path.join(os.environ['USERPROFILE'], 'AppData', 'Local', 'Temp')
-    assert '~' not in path
+    path = os.path.join(os.environ["USERPROFILE"], "AppData", "Local", "Temp")
+    assert "~" not in path
     assert os.path.exists(path)
     return path
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def temp_folder():
     """ A folderpath with for an empty folder """
     with TemporaryDirectory() as path:
         yield path
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def project_names():
-    return ['project_1', 'project_2']
+    return ["project_1", "project_2"]
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def project_paths(project_names, temp_folder, project_with_virtualenv):
     paths = []
     for name in project_names:
@@ -74,13 +73,9 @@ def project_paths(project_names, temp_folder, project_with_virtualenv):
     return paths
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def poems_file(temp_folder, project_paths):
-    temp_file = tempfile.NamedTemporaryFile(
-        mode='w',
-        delete=False,
-        dir=temp_folder
-    )
+    temp_file = tempfile.NamedTemporaryFile(mode="w", delete=False, dir=temp_folder)
 
     with temp_file as f:
         f.write("\n".join(project_paths) + "\n")
@@ -88,41 +83,35 @@ def poems_file(temp_folder, project_paths):
     return temp_file.name
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def simple_environments(project_names, project_paths):
     environments = []
     for name, path in zip(project_names, project_paths):
-        environments.append(
-            Environment(
-                project_path=path,
-                project_name=name,
-                envname=name
-            )
-        )
+        environments.append(Environment(project_path=path, project_name=name, envname=name))
     return environments
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def project_with_virtualenv(temp_folder):
-    project_path = os.path.join(temp_folder, 'project_with_virtualenv')
+    project_path = os.path.join(temp_folder, "project_with_virtualenv")
 
-    poetry_new_cmd = 'poetry new project_with_virtualenv'
-    proc = Popen(poetry_new_cmd.split(' '), stderr=PIPE, stdout=PIPE, cwd=temp_folder)
+    poetry_new_cmd = "poetry new project_with_virtualenv"
+    proc = Popen(poetry_new_cmd.split(" "), stderr=PIPE, stdout=PIPE, cwd=temp_folder)
     out, err = proc.communicate()
     if err:
         raise Exception(err)
 
-    new_venv_path = os.path.join(project_path, '.venv')
+    new_venv_path = os.path.join(project_path, ".venv")
 
-    venv_cmd = f'virtualenv --no-pip --no-wheel --no-setuptools {new_venv_path}'
-    proc = Popen(venv_cmd.split(' '), stderr=PIPE, stdout=PIPE)
+    venv_cmd = f"virtualenv --no-pip --no-wheel --no-setuptools {new_venv_path}"
+    proc = Popen(venv_cmd.split(" "), stderr=PIPE, stdout=PIPE)
     out, err = proc.communicate()
     if err:
         raise Exception(err)
 
-    poetry_config_cmd = 'poetry config --local virtualenvs.in-project true'
+    poetry_config_cmd = "poetry config --local virtualenvs.in-project true"
 
-    proc = Popen(poetry_config_cmd.split(' '), stderr=PIPE, stdout=PIPE, cwd=project_path)
+    proc = Popen(poetry_config_cmd.split(" "), stderr=PIPE, stdout=PIPE, cwd=project_path)
     out, err = proc.communicate()
     if err:
         raise Exception(err)
@@ -133,10 +122,10 @@ def project_with_virtualenv(temp_folder):
 @contextmanager
 def _TempEnviron(**env):
     old_environ = dict(os.environ)
-    os.environ.pop('PIPENV_ACTIVE', None)
-    os.environ.pop('POETRY_ACTIVE', None)
-    os.environ.pop('VENV', None)
-    os.environ.pop('VIRTUAL_ENV', None)
+    os.environ.pop("PIPENV_ACTIVE", None)
+    os.environ.pop("POETRY_ACTIVE", None)
+    os.environ.pop("VENV", None)
+    os.environ.pop("VIRTUAL_ENV", None)
     os.environ.update(env)
     yield
     os.environ.clear()
@@ -155,8 +144,7 @@ def TempEnviron():
 @pytest.fixture
 def mock_projects_dir(project_names, win_tempdir):
     """ A folderpath with 2 sample project folders """
-    with TemporaryDirectory(
-            prefix='projects', dir=win_tempdir) as projects_dir:
+    with TemporaryDirectory(prefix="projects", dir=win_tempdir) as projects_dir:
         for project_name in project_names:
             os.makedirs(os.path.join(projects_dir, project_name))
         yield projects_dir
@@ -169,29 +157,14 @@ def runner(TempEnviron):
         yield runner
 
 
-@pytest.fixture(name='environments')
+@pytest.fixture(name="environments")
 def fake_environments():
     """ Used by unit.test_pick parametrics tests """
     from poetry_poems.core import Environment
+
     return [
-        Environment(
-            project_path='/',
-            project_name='proj1',
-            envname='proj1-1C_-wqgW'
-            ),
-        Environment(
-            project_path='/',
-            project_name='proj2',
-            envname='proj2-12345678'
-            ),
-        Environment(
-            project_path='/',
-            project_name='abc-o',
-            envname='abc-o-12345678'
-            ),
-        Environment(
-            project_path='/',
-            project_name='notpipenv',
-            envname='notpipenv'
-            ),
+        Environment(project_path="/", project_name="proj1", envname="proj1-1C_-wqgW"),
+        Environment(project_path="/", project_name="proj2", envname="proj2-12345678"),
+        Environment(project_path="/", project_name="abc-o", envname="abc-o-12345678"),
+        Environment(project_path="/", project_name="notpipenv", envname="notpipenv"),
     ]

@@ -104,3 +104,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# custom
+poetry_poems/poetry-poems-backup
