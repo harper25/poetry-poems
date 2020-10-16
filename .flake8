@@ -1,0 +1,18 @@
+[flake8]
+max-line-length = 98
+# max_complexity = 10
+percent-greedy = 0
+format-greedy = 0
+ignore =
+    W503    # Ignore line break before binary operator after PEP8 update
+
+exclude =
+    .git
+    __pycache__
+    .mypy_cache
+    .venv
+    .vscode
+    docs/*
+    old
+    build
+    dist
