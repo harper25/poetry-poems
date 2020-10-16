@@ -48,7 +48,7 @@ class Picker(object):
         self.index = 0
         self.debug_mode = debug_mode
 
-        self.CYCLES = range(4)
+        self.CYCLES = range(3)
         self.expand_next()
 
     def config_curses(self):

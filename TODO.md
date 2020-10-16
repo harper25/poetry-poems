@@ -6,7 +6,7 @@
 - [ ] Makefile
 
 - [x] Fix crashing when poems + arrow when there is no venv/poetry for the project
-- [ ] Fix Picker, self.CYCLES = range(4)
+- [x] Fix Picker options
 
 - [ ] Add Black and Isort
 - [ ] Speed up testing

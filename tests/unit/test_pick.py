@@ -62,8 +62,6 @@ class TestPick():
         picker.expand_next()
         assert picker.expanded == 2
         picker.expand_next()
-        assert picker.expanded == 3
-        picker.expand_next()
         assert picker.expanded == 0
         picker.expand_next()
         assert picker.expanded == 1
@@ -71,4 +69,4 @@ class TestPick():
     def test_expand_pre(self, picker):
         assert picker.expanded == 0
         picker.expand_prev()
-        assert picker.expanded == 3
+        assert picker.expanded == 2

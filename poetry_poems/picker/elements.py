@@ -24,12 +24,10 @@ class Line():
         screen.addnstr(y, x, self.text, max_width, color_pair)
 
 
-# Refactor here <- ->
 class EnvLine(Line):
 
     SELECTED_STR = '●'
     UNSELECTED_STR = ' ' * len(SELECTED_STR)
-    HAS_DIR_STR = '*'
     UNSET_DIR_STR = '-- Not Set --'
 
     def __init__(self, env=None, **kwargs):
@@ -41,27 +39,16 @@ class EnvLine(Line):
     @property
     def text(self):
         prefix = self.SELECTED_STR if self.selected else self.UNSELECTED_STR
-        project_dir = self.env.project_name
-        has_project_dir = bool(project_dir)
-        if not has_project_dir:
-            project_dir = self.UNSET_DIR_STR
+        text = self.env.envname
 
-        if self.expanded == 0:
-            if has_project_dir:
-                text = '{} {}'.format(self.env.envname, self.HAS_DIR_STR)
-            else:
-                text = self.env.envname
-        if self.expanded == 1:
-            try:
-                text = '{} ({})'.format(self.env.envname, self.env.binpath)
-            except EnvironmentError as e:
-                text = str(e)
-        if self.expanded == 2:
-            try:
-                text = collapse_path(self.env.envpath)
-            except EnvironmentError as e:
-                text = str(e)
-        if self.expanded == 3:
-            text = project_dir
+        try:
+            if self.expanded == 0:
+                pass
+            if self.expanded == 1:
+                text = f'{text} ({self.env.binpath})'
+            if self.expanded == 2:
+                text = f'{text} ({collapse_path(self.env.envpath)})'
+        except EnvironmentError as e:
+            text = f'{text} ({str(e)})'
 
         return '{prefix} {text}'.format(prefix=prefix, text=text)
