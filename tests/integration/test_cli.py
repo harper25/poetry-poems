@@ -115,27 +115,29 @@ def test_no_match(runner, poems_file):
     assert "no matches" in result.output.lower()
 
 
-def test_no_environments(runner, temp_folder):
-    fake_poems_file = os.path.join(temp_folder, "fake_poems_file")
-    open(fake_poems_file, "w").close()
-    result = runner.invoke(poems, args=["--poems_file", fake_poems_file])
+def test_no_environments(runner, empty_poems_file):
+    result = runner.invoke(poems, args=["--poems_file", empty_poems_file])
     assert result.exception
     assert "no poems found in poems file:" in result.output.lower()
 
 
-def test_add_new_environment_path_does_not_exist(runner, poems_file):
+def test_add_new_environment_path_does_not_exist(runner, empty_poems_file):
     result = runner.invoke(
-        poems, args=["--poems_file", poems_file, "--add", "fakepath"], catch_exceptions=False
+        poems,
+        args=["--poems_file", empty_poems_file, "--add", "fakepath"],
+        catch_exceptions=False,
     )
     assert result.exit_code == 1
     assert "Path 'fakepath' does not exist" in result.output
 
 
-def test_add_new_environment_no_virtualenv(runner, poems_file, temp_folder):
+def test_add_new_environment_no_virtualenv(runner, empty_poems_file, temp_folder):
     new_project = os.path.join(temp_folder, "new_project")
     os.makedirs(new_project)
     result = runner.invoke(
-        poems, args=["--poems_file", poems_file, "--add", new_project], catch_exceptions=False
+        poems,
+        args=["--poems_file", empty_poems_file, "--add", new_project],
+        catch_exceptions=False,
     )
     assert result.exit_code == 1
     assert "No virtualenv associated with the project" in result.output
@@ -170,8 +172,8 @@ def test_completions(runner, poems_file, project_names):
         ("VIRTUAL_ENV", "Virtual environment is already active"),
     ],
 )
-def test_env_vars_errors(env_var, error_msg, runner, poems_file):
+def test_env_vars_errors(env_var, error_msg, runner, empty_poems_file):
     env = {env_var: "1"}
-    result = runner.invoke(poems, args=["--poems_file", poems_file], env=env)
+    result = runner.invoke(poems, args=["--poems_file", empty_poems_file], env=env)
     assert result.exception
     assert error_msg in result.output

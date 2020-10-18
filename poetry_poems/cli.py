@@ -75,7 +75,7 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
     project_paths = read_poetry_projects(poems_file)
     environments = generate_environments(project_paths)
 
-    if not environments and not _completion:
+    if not environments and not _completion and not new_poem_path:
         click.echo(
             f"No poems found in poems file: {collapse_path(poems_file)}\n"
             "Please, add a new poem with a command: poems --add <path-to-your-poem>"

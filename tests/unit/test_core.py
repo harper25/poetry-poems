@@ -24,15 +24,15 @@ def test_add_new_poem_invalid_paths(project_paths, poems_file):
     assert "The new path belongs to already saved project" in result
 
 
-def test_add_new_poem(project_paths, poems_file):
+def test_add_new_poem(project_paths, empty_poems_file):
     new_poem_path = "/my_repos/new_project"
-    result = add_new_poem(new_poem_path, project_paths, poems_file)
+    result = add_new_poem(new_poem_path, project_paths, empty_poems_file)
     assert result is None
 
-    with open(poems_file, "r") as f:
+    with open(empty_poems_file, "r") as f:
         saved_projects = f.read()
         saved_projects = saved_projects.splitlines()
-    assert saved_projects == project_paths + [new_poem_path]
+    assert saved_projects == [new_poem_path]
 
 
 def test_read_poetry_projects(project_paths, poems_file):
@@ -50,7 +50,7 @@ def test_delete_poem_from_poems_file(project_paths, poems_file):
 
 def test_generate_environments(project_paths, simple_environments):
     environments = generate_environments(project_paths)
-    assert environments[:2] == simple_environments
+    assert environments == simple_environments
 
 
 def test_environment_no_envpath(simple_environments):

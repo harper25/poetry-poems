@@ -9,7 +9,7 @@
 - [x] Fix Picker options
 
 - [x] Add Black and Isort
-- [ ] Speed up testing
+- [x] Speed up testing
 - [ ] Enable support for Windows (curses)
 - [ ] Check if it is working on Linux
 - [ ] CI Pipeline

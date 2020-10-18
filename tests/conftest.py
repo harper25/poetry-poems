@@ -57,15 +57,22 @@ def temp_folder():
         yield path
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
+def session_scoped_temp_folder():
+    """ A folderpath with for an empty folder """
+    with TemporaryDirectory() as path:
+        yield path
+
+
+@pytest.fixture(scope="session")
 def project_names():
-    return ["project_1", "project_2"]
+    return ["project_1", "project_2", "project_with_virtualenv"]
 
 
 @pytest.fixture(scope="function")
 def project_paths(project_names, temp_folder, project_with_virtualenv):
     paths = []
-    for name in project_names:
+    for name in project_names[:2]:
         project_path = os.path.join(temp_folder, name)
         paths.append(project_path)
         os.mkdir(project_path)
@@ -84,6 +91,21 @@ def poems_file(temp_folder, project_paths):
 
 
 @pytest.fixture(scope="function")
+def empty_poems_file(temp_folder):
+    temp_file = tempfile.NamedTemporaryFile(mode="w", delete=False, dir=temp_folder)
+    return temp_file.name
+
+
+@pytest.fixture(scope="function")
+def save_to_poems_file(poems_file):
+    def handler(poems_file=poems_file, environment=None, project_path=None):
+        project_path = project_path or environment.project_path
+
+        with poems_file(mode="a") as f:
+            f.write(f"{project_path}\n")
+
+
+@pytest.fixture(scope="function")
 def simple_environments(project_names, project_paths):
     environments = []
     for name, path in zip(project_names, project_paths):
@@ -91,12 +113,14 @@ def simple_environments(project_names, project_paths):
     return environments
 
 
-@pytest.fixture(scope="function")
-def project_with_virtualenv(temp_folder):
-    project_path = os.path.join(temp_folder, "project_with_virtualenv")
+@pytest.fixture(scope="session")
+def project_with_virtualenv(session_scoped_temp_folder):
+    project_path = os.path.join(session_scoped_temp_folder, "project_with_virtualenv")
 
     poetry_new_cmd = "poetry new project_with_virtualenv"
-    proc = Popen(poetry_new_cmd.split(" "), stderr=PIPE, stdout=PIPE, cwd=temp_folder)
+    proc = Popen(
+        poetry_new_cmd.split(" "), stderr=PIPE, stdout=PIPE, cwd=session_scoped_temp_folder
+    )
     out, err = proc.communicate()
     if err:
         raise Exception(err)
@@ -110,7 +134,6 @@ def project_with_virtualenv(temp_folder):
         raise Exception(err)
 
     poetry_config_cmd = "poetry config --local virtualenvs.in-project true"
-
     proc = Popen(poetry_config_cmd.split(" "), stderr=PIPE, stdout=PIPE, cwd=project_path)
     out, err = proc.communicate()
     if err:
