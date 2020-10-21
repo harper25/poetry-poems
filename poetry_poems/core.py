@@ -1,6 +1,7 @@
 import os
 
 from poetry_poems.poetry import call_poetry_env, call_python_version
+from poetry_poems.utils import collapse_path
 
 
 class Environment:
@@ -33,7 +34,8 @@ class Environment:
             if code != 0 or not virtualenv_output:
                 raise (
                     EnvironmentError(
-                        f"No virtual environment associated with project: {self.project_path}"
+                        "No virtual environment associated with project: "
+                        f"{collapse_path(self.project_path)}"
                     )
                 )
             self._envpath = virtualenv_output.split()[0]
@@ -49,11 +51,13 @@ class Environment:
             elif "Scripts" in env_ls:
                 binpath = os.path.join(self.envpath, "Scripts", "python.exe")
             else:
-                raise EnvironmentError(f"could not find python binary path: {self.envpath}")
+                raise EnvironmentError(
+                    f"could not find python binary path: {collapse_path(self.envpath)}"
+                )
             if os.path.exists(binpath):
                 self._binpath = binpath
             else:
-                raise EnvironmentError(f"could not find python binary: {binpath}")
+                raise EnvironmentError(f"could not find python binary: {collapse_path(binpath)}")
 
         return self._binpath
 
@@ -83,7 +87,10 @@ def add_new_poem(new_poem_path, project_paths, poems_file):
 
     for existing_project in project_paths:
         if existing_project in new_poem_path:
-            return f"The new path belongs to already saved project '{existing_project}'!"
+            return (
+                "The new path belongs to already saved project: "
+                f"{collapse_path(existing_project)}!"
+            )
 
     with open(poems_file, "a") as f:
         f.write(f"{new_poem_path}\n")
