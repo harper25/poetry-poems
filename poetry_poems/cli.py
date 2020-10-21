@@ -160,13 +160,13 @@ def print_project_list(environments, verbose):
             click.echo(name)
         else:
             try:
-                envpath = click.style(environment.envpath, fg="blue")
+                envpath = click.style(environment.envpath, fg="bright_blue")
                 binversion = environment.binversion
             except EnvironmentError:
                 envpath = click.style("-- Not configured --", fg="red")
                 binversion = click.style("-- Not configured --", fg="red")
 
-            project_path = click.style(environment.project_path, fg="blue")
+            project_path = click.style(environment.project_path, fg="cyan")
 
             click.echo(
                 f"{name}\n"
