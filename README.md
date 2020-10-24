@@ -9,6 +9,8 @@ Overview
 
 Poetry-poems is a tool that speeds up switching between Poetry projects by navigating to a specific Poetry project and activating Poetry shell at the same time.
 
+![poems-intro](https://github.com/harper25/poetry-poems/blob/master/docs/static/poems-intro.gif)
+
 Documentation
 -------------
 
