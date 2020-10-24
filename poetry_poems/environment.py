@@ -42,7 +42,7 @@ class EnvVars:
         elif self.VENV_IS_ACTIVE:
             error = (
                 "Virtual environment is already active.\n"
-                "Use 'deactivate' to close the enviroment "
+                "Use 'exit/deactivate' to close the shell "
                 "before starting a new one."
             )
 

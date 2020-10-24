@@ -31,7 +31,7 @@ __all__ = ["Picker"]
 
 OPTION_COLOR = "WHITE"
 SELECTED_OPTION = "YELLOW"
-TITLE_COLOR = "BLUE"
+TITLE_COLOR = "CYAN"
 IS_TESTING = "pytest" in sys.modules
 
 

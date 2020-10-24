@@ -85,13 +85,6 @@ def add_new_poem(new_poem_path, project_paths, poems_file):
     if new_poem_path in project_paths:
         return "Project already saved in poems!"
 
-    for existing_project in project_paths:
-        if existing_project in new_poem_path:
-            return (
-                "The new path belongs to already saved project: "
-                f"{collapse_path(existing_project)}!"
-            )
-
     with open(poems_file, "a") as f:
         f.write(f"{new_poem_path}\n")
 

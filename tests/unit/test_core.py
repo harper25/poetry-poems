@@ -18,12 +18,6 @@ def test_add_new_poem_already_saved(project_paths, poems_file):
     assert result == "Project already saved in poems!"
 
 
-def test_add_new_poem_invalid_paths(project_paths, poems_file):
-    new_poem_path = f"{project_paths}/new_nested_project"
-    result = add_new_poem(new_poem_path, project_paths, poems_file)
-    assert "The new path belongs to already saved project" in result
-
-
 def test_add_new_poem(project_paths, empty_poems_file):
     new_poem_path = "/my_repos/new_project"
     result = add_new_poem(new_poem_path, project_paths, empty_poems_file)

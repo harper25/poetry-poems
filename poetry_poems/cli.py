@@ -22,16 +22,18 @@ from poetry_poems.utils import collapse_path, get_query_matches
 
 @click.command()
 @click.argument("envname", default="", required=False)
-@click.option("--list", "list_", is_flag=True, help="List Poetry Projects")
-@click.option("--delete", "-d", "delete", is_flag=True, help="Deletes the target Enviroment")
-@click.option("--verbose", "-v", is_flag=True, help="Verbose")
-@click.option("--version", is_flag=True, help="Show Version")
+@click.option("--list", "list_", is_flag=True, help="List Poetry projects saved in poems file.")
+@click.option(
+    "--delete", "-d", "delete", is_flag=True, help="Deletes project path from poems file."
+)
+@click.option("--verbose", "-v", is_flag=True, help="Verbose mode.")
+@click.option("--version", is_flag=True, help="Show version.")
 @click.option(
     "-p",
     "--poems_file",
     type=click.Path(exists=False),
     default=lambda: f"{os.environ.get('HOME', '')}/.poetry-poems",
-    help="A path to the file listing all poems.",
+    help="File containing Poetry project paths, default: $HOME/.poetry-poems",
 )
 @click.option(
     "--add",
@@ -39,9 +41,9 @@ from poetry_poems.utils import collapse_path, get_query_matches
     "new_poem_path",
     type=click.Path(exists=False),
     default="",
-    help="A path to a new poem.",
+    help="Add a new project path to poems file.",
 )
-@click.option("--_completion", is_flag=True)
+@click.option("--_completion", is_flag=True, help="Used for autocompletion.")
 @click.pass_context
 def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_path, _completion):
     """
@@ -49,10 +51,15 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
     Poems - Poetry Environment Switcher
 
     Go To Project:\n
+        >>> poems
         >>> poems envname
 
+    Add an Environment:\n
+        >>> poems --add <project_path>
+
     Delete an Environment:\n
-        >>> poems envname --delete
+        >>> poems --delete
+        >>> poems --delete envname
 
     See all Poetry Environments:\n
         >>> poems --list
