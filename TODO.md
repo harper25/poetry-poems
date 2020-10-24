@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Readme
+- [x] Readme
 - [ ] Gifs :)
 - [ ] Docs/History
 - [ ] Makefile
