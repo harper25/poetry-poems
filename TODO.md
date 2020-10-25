@@ -10,7 +10,7 @@
 
 - [x] Add Black and Isort
 - [x] Speed up testing
-- [ ] Enable support for Windows (curses)
-- [ ] Check if it is working on Linux
+- [x] Enable support for Windows (curses)
+- [x] Check if it is working on Linux
 - [ ] CI Pipeline
 - [ ] Pypi

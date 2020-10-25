@@ -67,7 +67,7 @@ def test_environment_no_binpath(simple_environments):
 def test_environment_binpath(simple_environments):
     env = simple_environments[0]
     fake_envpath = os.path.join(env.project_path, "envpath")
-    fake_binpath = os.path.join(fake_envpath, "bin/python")
+    fake_binpath = os.path.join(fake_envpath, "bin", "python")
     os.makedirs(fake_binpath)
     env._envpath = fake_envpath
     assert env.binpath == fake_binpath
@@ -85,7 +85,7 @@ def test_environment_python_binary_missing(venv_path, simple_environments):
     assert "could not find python binary" in str(e)
 
 
-def test_environment_python_binversion_error(simple_environments):
+def test_environment_python_binversion_error(simple_environments, env_vars):
     env = simple_environments[0]
     fake_envpath = os.path.join(env.project_path, "envpath")
     intermediate_path = os.path.join(fake_envpath, "bin")
@@ -96,12 +96,18 @@ def test_environment_python_binversion_error(simple_environments):
     env._binpath = fake_binpath
     with pytest.raises(EnvironmentError) as e:
         env.binversion
-    assert "Permission denied" in str(e)
+    if env_vars.IS_WINDOWS:
+        assert "is not a valid Win32 application" in str(e)
+    else:
+        assert "Permission denied" in str(e)
 
 
-def test_environment_python_binversion(simple_environments, venv_fresh):
+def test_environment_python_binversion(simple_environments, venv_fresh, env_vars):
     env = simple_environments[0]
     fake_envpath = venv_fresh
     env._envpath = fake_envpath
-    env._binpath = os.path.join(fake_envpath, "bin/python")
+    if env_vars.IS_WINDOWS:
+        env._binpath = os.path.join(fake_envpath, "Scripts", "python.exe")
+    else:
+        env._binpath = os.path.join(fake_envpath, "bin", "python")
     assert "Python" in env.binversion

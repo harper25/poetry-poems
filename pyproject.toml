@@ -8,6 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.6"
 click = "^7.1.2"
+# curses-win = {git = "https://github.com/gtalarico/curses-win.git", rev = "2.2.0", markers = "sys_platform == 'win32'"}
+windows-curses = { version = "^2.1.0", markers = "sys_platform == 'win32'" }
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.1"

@@ -32,7 +32,7 @@ from poetry_poems.utils import collapse_path, get_query_matches
     "-p",
     "--poems_file",
     type=click.Path(exists=False),
-    default=lambda: f"{os.environ.get('HOME', '')}/.poetry-poems",
+    default=lambda: f"{os.environ.get('HOME', os.environ.get('USERPROFILE', ''))}/.poetry-poems",
     help="File containing Poetry project paths, default: $HOME/.poetry-poems",
 )
 @click.option(

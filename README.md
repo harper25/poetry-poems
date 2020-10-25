@@ -11,8 +11,8 @@ Poetry-poems is a tool that speeds up switching between Poetry projects by navig
 
 Supported OS:
 - [x] Mac OS
-- [ ] Linux
-- [ ] Windows
+- [x] Linux
+- [x] Windows 10
 
 ![poems-intro](https://github.com/harper25/poetry-poems/blob/master/docs/static/poems-intro.gif)
 
