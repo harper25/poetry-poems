@@ -9,6 +9,11 @@ Overview
 
 Poetry-poems is a tool that speeds up switching between Poetry projects by navigating to a specific Poetry project and activating Poetry shell at the same time.
 
+Supported OS:
+- [x] Mac OS
+- [ ] Linux
+- [ ] Windows
+
 ![poems-intro](https://github.com/harper25/poetry-poems/blob/master/docs/static/poems-intro.gif)
 
 Documentation
@@ -17,45 +22,83 @@ Documentation
 Virtual environments created with Poetry (`poetry shell`), by default kept in `poetry config virtualenvs.path`, do not store paths to projects that use them. The only link available points from a project directory to a corresponding Poetry virtual environment. Therefore, a hidden file `.poetry-poems` placed in `$HOME` is created to store paths to Poetry projects.
 
 Before running poetry-poems you have to add Poetry project paths to the poems file:
-```python
+```sh
 poems --add <project_path>
 poems --add $PWD
 poems --add .
 ```
 
 It is possible to use a different file then default `$HOME/.poetry-poems`:
-```python
+```sh
 poems --poems_file <custom_poems_file> --add <project_path>
 ```
 
 In case you would like to save a project with a virtual environment located in the project directory (created with `virtualenv` or `python -m venv`), please ensure that Poetry is configured correctly in the project directory:
-```python
+```sh
 cd <project_path>
 poetry env list --full-path
 poetry config --local virtualenvs.in-project true
 ```
 
 Choose a project to launch in an interactive mode:
-```python
+```sh
 poems
 ```
 
 Launch a specific project:
-```python
+```sh
 poems <envname>
 ```
 
 List all saved projects:
-```python
+```sh
 poems --list
 poems --list --verbose
 ```
 
 Delete a project path from poems file:
-```python
+```sh
 poems --delete
 poems --delete envname
 ```
+
+### Completions
+
+After setting the completions, please, restart your session or open a new terminal ;)
+
+**Bash + zsh**
+
+Add the code below to your .bashrc/.zshrc:
+```sh
+export BASE_SHELL=$(basename $SHELL)
+
+if [[ "$BASE_SHELL" == "zsh" ]] ; then
+autoload bashcompinit && bashcompinit
+fi
+
+_poetry_poems_completions() {
+COMPREPLY=($(compgen -W "$(poems --_completion)" -- "${COMP_WORDS[1]}"))
+}
+complete -F _poetry_poems_completions poems
+```
+
+**Fish**
+
+Add a new file poems.fish to your Fish config folder (eg. ~/.config/fish/completions/poems.fish):
+
+```sh
+complete --command poems --arguments '(poems --_completion (commandline -cp))' --no-files
+```
+
+**pdksh**
+
+To have a shell completion, write into your personal ~/.profile, after the call of exported environments variables for your Python, as WORKON_HOME:
+
+```sh
+set -A complete_poems -- $(poems --_completion)
+```
+
+### TODO
 
 Still a lot [TODO](https://github.com/harper25/poetry-poems/blob/master/TODO.md)
 
