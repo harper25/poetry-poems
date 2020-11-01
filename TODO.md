@@ -12,5 +12,6 @@
 - [x] Speed up testing
 - [x] Enable support for Windows (curses)
 - [x] Check if it is working on Linux
+- [x] tox
 - [ ] CI Pipeline
 - [ ] Pypi

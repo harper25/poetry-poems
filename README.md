@@ -98,6 +98,16 @@ To have a shell completion, write into your personal ~/.profile, after the call 
 set -A complete_poems -- $(poems --_completion)
 ```
 
+### Tox
+
+When using `pyenv` it is necessary to make certain python versions available to tox. It is possible by invoking (the versions have to be installed first):
+```sh
+pyenv versions
+pyenv install --list
+pyenv install 3.6.9
+pyenv local 3.6.9 3.7.5 3.8.3 3.9.0
+```
+
 ### TODO
 
 Still a lot [TODO](https://github.com/harper25/poetry-poems/blob/master/TODO.md)

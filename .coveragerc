@@ -6,3 +6,4 @@ fail_under = 70
 branch = True
 omit =
     tests/*
+    .tox/*
