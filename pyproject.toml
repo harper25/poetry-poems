@@ -60,10 +60,11 @@ exclude = '''
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py36,py37,py38,py39
+envlist = py{36,37,38,39}, linting{39}
 isolated_build = true
 
 [testenv]
+description = Tests and coverage
 deps =
     pytest
     pytest-cov
@@ -72,13 +73,31 @@ setenv =
     PYTHONPATH = {toxinidir}
     # LC_ALL=en_US.utf-8
     # LANG=en_US.utf-8
-whitelist_externals =
-  poetry
-commands = pytest
-# commands = pytest --basetemp={envtmpdir} --cov poetry_poems --cov-report=html
-# commands =
-    # poetry install --no-root -v
-    # poetry run pytest
+# whitelist_externals =
+#   poetry
+commands =
+    pytest
+    # pytest --basetemp={envtmpdir} --cov poetry_poems --cov-report=html
+
+[testenv:linting39]
+description = Static formatting and quality enforcement
+deps =
+    poetry
+commands =
+    python --version
+    poetry install --no-root -v
+    poetry show
+    isort --check-only .
+    black --check .
+    flake8 .
+
+[testenv:cov39]
+deps =
+    poetry
+commands =
+    poetry install --no-root -v
+    poetry show
+    pytest
 """
 [build-system]
 requires = ["poetry>=0.12"]
