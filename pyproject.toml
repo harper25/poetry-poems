@@ -76,6 +76,7 @@ setenv =
 # whitelist_externals =
 #   poetry
 commands =
+    python --version
     pytest
     # pytest --basetemp={envtmpdir} --cov poetry_poems --cov-report=html
 
