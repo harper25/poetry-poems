@@ -13,5 +13,5 @@
 - [x] Enable support for Windows (curses)
 - [x] Check if it is working on Linux
 - [x] tox
-- [ ] CI Pipeline
+- [x] Travis CI Pipeline (maybe CircleCI in the future?)
 - [ ] Pypi

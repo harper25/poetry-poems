@@ -63,6 +63,14 @@ legacy_tox_ini = """
 envlist = py{36,37,38,39}, linting{39}
 isolated_build = true
 
+[travis]
+python =
+    3.9: py39, linting39
+    3.8: py38
+    3.7: py37
+    3.6: py36
+
+
 [testenv]
 description = Tests and coverage
 deps =
