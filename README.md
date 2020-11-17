@@ -2,6 +2,10 @@
 
 Poetry Environment Switcher
 
+[![Build Status](https://travis-ci.org/harper25/poetry-poems.svg?branch=master)](https://travis-ci.org/harper25/poetry-poems)
+[![codecov](https://codecov.io/gh/harper25/poetry-poems/branch/master/graph/badge.svg)](https://codecov.io/gh/harper25/poetry-poems)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 --------
 
 Overview

@@ -8,3 +8,6 @@ python:
 install: pip install -U tox-travis poetry
 
 script: tox
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

@@ -88,6 +88,21 @@ commands =
     pytest
     # pytest --basetemp={envtmpdir} --cov poetry_poems --cov-report=html
 
+[testenv:py39]
+description = Tests and coverage with codecov report
+deps =
+    pytest
+    pytest-cov
+    codecov
+setenv =
+    PYTHONPATH = {toxinidir}
+passenv =
+    CI TRAVIS TRAVIS_*
+commands =
+    python --version
+    pytest
+    codecov
+
 [testenv:linting39]
 description = Static formatting and quality enforcement
 deps =
