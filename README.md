@@ -11,7 +11,9 @@ Poetry Environment Switcher
 Overview
 --------
 
-Poetry-poems is a tool that speeds up switching between Poetry projects by navigating to a specific Poetry project and activating Poetry shell at the same time.
+Poetry-poems is a tool that speeds up switching between Python Poetry-based projects by navigating to a specific project and activating Poetry shell at the same time.
+
+Poetry-poems was inspired and is based on amazing project [Pipes - Pipenv Environment Switcher](https://github.com/gtalarico/pipenv-pipes).
 
 Supported OS:
 - [x] Mac OS
@@ -119,7 +121,7 @@ Still a lot [TODO](https://github.com/harper25/poetry-poems/blob/master/TODO.md)
 License
 -------
 
-[MIT License](https://github.com/harper25/poetry-poems/blob/master/LICENSE)
+[lgpl-3.0](https://github.com/harper25/poetry-poems/blob/master/LICENSE)
 
 Credits
 -------
