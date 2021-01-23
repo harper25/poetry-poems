@@ -20,7 +20,7 @@ Supported OS:
 - [x] Linux
 - [x] Windows 10
 
-![poems-intro](https://github.com/harper25/poetry-poems/blob/master/docs/static/poems-intro.gif)
+![poems-intro](https://raw.githubusercontent.com/harper25/poetry-poems/master/docs/static/poems-intro.gif)
 
 Documentation
 -------------
