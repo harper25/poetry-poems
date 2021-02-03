@@ -143,6 +143,31 @@ def test_add_new_environment_no_virtualenv(runner, empty_poems_file, temp_folder
     assert "No virtualenv associated with the project" in result.output
 
 
+def test_add_new_environment_already_present(
+    runner, poems_file, temp_folder, project_with_virtualenv
+):
+    result = runner.invoke(
+        poems,
+        args=["--poems_file", poems_file, "--add", project_with_virtualenv],
+        catch_exceptions=False,
+    )
+    assert result.exit_code == 1
+    assert "Project already saved in poems!" in result.output
+
+
+def test_add_new_environment(runner, empty_poems_file, temp_folder, project_with_virtualenv):
+    result = runner.invoke(
+        poems,
+        args=["--poems_file", empty_poems_file, "--add", project_with_virtualenv],
+        catch_exceptions=False,
+    )
+    assert result.exit_code == 0
+    assert "" in result.output
+    with open(empty_poems_file, "r") as f:
+        content = f.read()
+    assert project_with_virtualenv in content
+
+
 def test_one_match_do_shell(runner, poems_file, project_names, project_with_virtualenv):
     result = runner.invoke(
         poems,

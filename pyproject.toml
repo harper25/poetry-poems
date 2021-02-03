@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "poetry-poems"
-version = "0.1.0"
+version = "0.2.0"
 description = "Poetry Environments Switcher: CLI Tool to help manage Poetry Enviroments and corresponding Project Directories."
 authors = ["harper25 <olesjakubb@gmail.com>"]
 license = "lgpl-3.0"
-readme = "README.md"
-homepage = "https://github.com/harper25/poetry-poems"
+readme = "README.rst"
+homepage = "https://poetry-poems.readthedocs.io/en/latest/"
 repository = "https://github.com/harper25/poetry-poems"
 include = [
     "LICENSE",

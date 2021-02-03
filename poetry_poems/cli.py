@@ -17,15 +17,13 @@ from poetry_poems.core import (
 from poetry_poems.environment import EnvVars
 from poetry_poems.picker import Picker
 from poetry_poems.poetry import PoetryConfig, call_poetry_env, call_poetry_shell
-from poetry_poems.utils import collapse_path, get_query_matches
+from poetry_poems.utils import collapse_path, get_query_matches, parse_new_poem_path
 
 
 @click.command()
 @click.argument("envname", default="", required=False)
-@click.option("--list", "list_", is_flag=True, help="List Poetry projects saved in poems file.")
-@click.option(
-    "--delete", "-d", "delete", is_flag=True, help="Deletes project path from poems file."
-)
+@click.option("--list", "list_", is_flag=True, help="List all Poems saved in Poems registry.")
+@click.option("--delete", "-d", "delete", is_flag=True, help="Delete Poem from Poems registry.")
 @click.option("--verbose", "-v", is_flag=True, help="Verbose mode.")
 @click.option("--version", is_flag=True, help="Show version.")
 @click.option(
@@ -33,7 +31,7 @@ from poetry_poems.utils import collapse_path, get_query_matches
     "--poems_file",
     type=click.Path(exists=False),
     default=lambda: f"{os.environ.get('HOME', os.environ.get('USERPROFILE', ''))}/.poetry-poems",
-    help="File containing Poetry project paths, default: $HOME/.poetry-poems",
+    help="Poems registry file containing Poems project paths, default: $HOME/.poetry-poems",
 )
 @click.option(
     "--add",
@@ -41,7 +39,7 @@ from poetry_poems.utils import collapse_path, get_query_matches
     "new_poem_path",
     type=click.Path(exists=False),
     default="",
-    help="Add a new project path to poems file.",
+    help="Add a new Poem to Poems registry.",
 )
 @click.option("--_completion", is_flag=True, help="Used for autocompletion.")
 @click.pass_context
@@ -50,18 +48,19 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
 
     Poems - Poetry Environment Switcher
 
-    Go To Project:\n
-        >>> poems
+    Activate Poem:\n
+        >>> poems\n
         >>> poems envname
 
-    Add an Environment:\n
-        >>> poems --add <project_path>
+    Add a new Poem to Poems registry:\n
+        >>> poems --add <project_path>\n
+        >>> poems --add $PWD
 
-    Delete an Environment:\n
-        >>> poems --delete
+    Delete a Poem from Poems registry:\n
+        >>> poems --delete\n
         >>> poems --delete envname
 
-    See all Poetry Environments:\n
+    See all saved Poems:\n
         >>> poems --list
         >>> poems --list --verbose
 
@@ -117,7 +116,7 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
 
     if delete:
         if not click.confirm(
-            f"Are you sure you want to delete: '{environment.project_path}' from poems file?",
+            f"Are you sure you want to delete: '{environment.project_path}' from poems registry?",
             default=False,
         ):
             msg = "Poem not deleted"
@@ -125,7 +124,7 @@ def poems(ctx, envname, list_, verbose, version, delete, poems_file, new_poem_pa
             sys.exit(0)
 
         delete_poem_from_poems_file(environment.project_path, project_paths, poems_file)
-        msg = f"Poem '{environment.envname}' deleted from poems file"
+        msg = f"Poem '{environment.envname}' deleted from poems registry"
         click.echo(click.style(msg, fg="yellow"))
         sys.exit(0)
 
@@ -217,6 +216,12 @@ def ensure_project_dir_has_env(project_dir):
     else:
         msg = f"No virtualenv associated with the project: {project_dir}"
         click.echo(click.style(msg, fg="red"), err=True)
+        click.echo(
+            click.style(
+                "For .venv in project: poetry config --local virtualenvs.in-project true",
+                fg="yellow",
+            )
+        )
         sys.exit(1)
 
 
@@ -232,12 +237,6 @@ def ensure_poetry_config_is_ok(poetry_config):
     if error_msg:
         click.echo(click.style(error_msg, fg="red"))
         sys.exit(1)
-
-
-def parse_new_poem_path(poem_path):
-    if poem_path == ".":
-        poem_path = os.path.abspath(os.getcwd())
-    return poem_path
 
 
 def ensure_path_exists(path):

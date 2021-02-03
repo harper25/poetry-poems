@@ -20,8 +20,8 @@ class EnvVars:
 
         try:
             import curses  # noqa flake8
-        except ImportError:
-            self.HAS_CURSES = False
+        except ImportError:  # pragma: no cover
+            self.HAS_CURSES = False  # pragma: no cover
         else:
             self.HAS_CURSES = True
 

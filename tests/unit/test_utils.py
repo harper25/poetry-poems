@@ -7,7 +7,12 @@ import os
 
 import pytest
 
-from poetry_poems.utils import collapse_path, get_project_name, get_query_matches
+from poetry_poems.utils import (
+    collapse_path,
+    get_project_name,
+    get_query_matches,
+    parse_new_poem_path,
+)
 
 
 @pytest.mark.utils
@@ -46,3 +51,9 @@ def test_collapse_path():
     assert home in full_path
     assert home not in collapsed_path
     assert "~" in collapsed_path
+
+
+def test_parse_new_poem_path():
+    path = parse_new_poem_path(".")
+    assert len(path) > 1
+    assert "poetry-poems" in path

@@ -27,3 +27,9 @@ def collapse_path(path):
     home = os.path.expanduser("~")
     path = path.replace(home, "~")
     return path
+
+
+def parse_new_poem_path(poem_path):
+    if poem_path == ".":
+        poem_path = os.path.abspath(os.getcwd())
+    return poem_path
