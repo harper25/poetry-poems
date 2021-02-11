@@ -1,8 +1,8 @@
 # TODO
 
 - [x] Readme
-- [ ] Gifs :)
-- [ ] Docs/History
+- [x] Gifs :)
+- [x] ReadTheDocs & History
 - [ ] Makefile
 
 - [x] Fix crashing when poems + arrow when there is no venv/poetry for the project
@@ -14,4 +14,6 @@
 - [x] Check if it is working on Linux
 - [x] tox
 - [x] Travis CI Pipeline (maybe CircleCI in the future?)
-- [ ] Pypi
+- [x] Pypi
+
+- [ ] Codecov project setting in PR: do not fail the job if the coverage dropped by less then 3-5%

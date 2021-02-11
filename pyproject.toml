@@ -1,9 +1,32 @@
 [tool.poetry]
 name = "poetry-poems"
-version = "0.1.0"
-description = ""
+version = "0.2.0"
+description = "Poetry Environments Switcher: CLI Tool to help manage Poetry Enviroments and corresponding Project Directories."
 authors = ["harper25 <olesjakubb@gmail.com>"]
-license = "MIT"
+license = "lgpl-3.0"
+readme = "README.rst"
+homepage = "https://poetry-poems.readthedocs.io/en/latest/"
+repository = "https://github.com/harper25/poetry-poems"
+include = [
+    "LICENSE",
+    "license-poetry-poems"
+]
+keywords = ["poetry", "virtual environment", "cli"]
+
+
+classifiers = [
+    "Environment :: Console",
+    "Environment :: Console :: Curses",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -22,6 +45,7 @@ flake8-print = "^3.1.4"
 flake8-comprehensions = "^3.2.3"
 flake8-use-fstring = "^1.1"
 tox = "^3.20.1"
+sphinx-rtd-theme = "^0.5.1"
 
 [tool.poetry.scripts]
 poems = "poetry_poems.cli:poems"
@@ -123,6 +147,7 @@ commands =
     poetry show
     pytest
 """
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
