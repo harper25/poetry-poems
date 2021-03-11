@@ -7,7 +7,11 @@ def PipedPopen(cmds, **kwargs):
     """ Helper Piped Process for drier code"""
     timeout = kwargs.pop("timeout", None)
     env = kwargs.pop("env", dict(os.environ))
-    proc = Popen(cmds, stdout=PIPE, stderr=PIPE, env=env, **kwargs)
+
+    # For Windows we must explicitly state that a command should be run as a
+    # shell command
+    run_as_shell = sys.platform == "win32"
+    proc = Popen(cmds, stdout=PIPE, stderr=PIPE, env=env, shell=run_as_shell, **kwargs)
     out, err = proc.communicate(timeout=timeout)
     output = out.decode().strip() or err.decode().strip()
     code = proc.returncode
@@ -23,10 +27,13 @@ def call_poetry_shell(cwd, envname="poetry-shell", timeout=None):
     stdout = PIPE if is_test else sys.stdout
     stderr = PIPE if is_test else sys.stderr
 
+    # For Windows we must explicitly state that a command should be run as a
+    # shell command
+    run_as_shell = sys.platform == "win32"
     proc = Popen(
         ["poetry", "shell"],
         cwd=cwd,
-        shell=False,
+        shell=run_as_shell,
         stdout=stdout,
         stderr=stderr,
         env=environ,
