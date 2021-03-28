@@ -22,7 +22,9 @@ copyright = '2021, Jakub Oles'
 author = 'Jakub Oles'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2.0'
+from poetry_poems.__init__ import __version__
+
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------
