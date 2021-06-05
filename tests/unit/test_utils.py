@@ -30,13 +30,7 @@ def test_get_project_name(folder_name, expected):
 
 @pytest.mark.utils
 @pytest.mark.parametrize(
-    "query,num_results",
-    [
-        ("proj", 2),
-        ("proj1", 1),
-        ("o", 4),
-        ("zzz", 0),
-    ],
+    "query,num_results", [("proj", 2), ("proj1", 1), ("o", 4), ("zzz", 0),],
 )
 def test_get_query_matches(query, num_results, environments):
     rv = get_query_matches(environments, query)

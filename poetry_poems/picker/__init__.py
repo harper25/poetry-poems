@@ -60,12 +60,7 @@ class Picker(object):
 
     def start(self):
         if IS_TESTING:
-            data = json.dumps(
-                {
-                    "query": self.query,
-                    "envs": len(self.environments),
-                }
-            )
+            data = json.dumps({"query": self.query, "envs": len(self.environments),})
             raise SystemExit(data)
         return curses.wrapper(self._start)
 
