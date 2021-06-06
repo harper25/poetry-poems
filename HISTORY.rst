@@ -3,6 +3,13 @@ History
 =======
 
 
+0.2.1 (2021-06-06)
+------------------
+
+* Fix poems for Windows - crashing on subproccess calls
+* Fix displaying poems details for Windows in colored terminals
+
+
 0.2.0 (2021-02-11)
 ------------------
 

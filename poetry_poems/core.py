@@ -1,7 +1,10 @@
 import os
+import re
 
 from poetry_poems.poetry import call_poetry_env, call_python_version
 from poetry_poems.utils import collapse_path
+
+ANSI_ESCAPE_PATTERN = re.compile(r"(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]")
 
 
 class Environment:
@@ -38,7 +41,8 @@ class Environment:
                         f"{collapse_path(self.project_path)}"
                     )
                 )
-            self._envpath = virtualenv_output.split()[0]
+            envpath = ANSI_ESCAPE_PATTERN.sub("", virtualenv_output)
+            self._envpath = envpath.split()[0]
         return self._envpath
 
     @property
@@ -58,7 +62,6 @@ class Environment:
                 self._binpath = binpath
             else:
                 raise EnvironmentError(f"could not find python binary: {collapse_path(binpath)}")
-
         return self._binpath
 
     @property
