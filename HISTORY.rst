@@ -2,6 +2,13 @@
 History
 =======
 
+0.2.2 (2022-10-08)
+-----------------
+
+* Fix Dockerfiles for testing poetry-poems (#12)
+* Fix slow CLI responsiveness when checking details (partially #3)
+* Fix error message when activating non-existent project (#4)
+* Update project dependencies
 
 0.2.1 (2021-06-06)
 ------------------

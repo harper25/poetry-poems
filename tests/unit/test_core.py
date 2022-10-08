@@ -61,7 +61,7 @@ def test_environment_no_binpath(simple_environments):
     env._envpath = fake_envpath
     with pytest.raises(EnvironmentError) as e:
         env.binpath
-    assert "could not find python binary path" in str(e)
+    assert "Could not find python binary path" in str(e)
 
 
 def test_environment_binpath(simple_environments):
@@ -82,7 +82,7 @@ def test_environment_python_binary_missing(venv_path, simple_environments):
     env._envpath = fake_envpath
     with pytest.raises(EnvironmentError) as e:
         env.binpath
-    assert "could not find python binary" in str(e)
+    assert "Could not find python binary path" in str(e)
 
 
 def test_environment_python_binversion_error(simple_environments, env_vars):

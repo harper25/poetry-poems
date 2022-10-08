@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-poems"
-version = "0.2.1"
+version = "0.2.2"
 description = "Poetry Environments Switcher: CLI Tool to help manage Poetry Enviroments and corresponding Project Directories."
 authors = ["harper25 <olesjakubb@gmail.com>"]
 license = "lgpl-3.0"
