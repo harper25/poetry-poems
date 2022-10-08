@@ -33,35 +33,43 @@ class Environment:
     @property
     def envpath(self):
         if self._envpath is None:
-            virtualenv_output, code = call_poetry_env(self.project_path)
-            if code != 0 or not virtualenv_output:
-                raise (
-                    EnvironmentError(
+            if not os.path.exists(self.project_path):
+                self._envpath = "Project directory does not exist!"
+            else:
+                virtualenv_output, code = call_poetry_env(self.project_path)
+                if code != 0 or not virtualenv_output:
+                    self._envpath = (
                         "No virtual environment associated with project: "
                         f"{collapse_path(self.project_path)}"
                     )
-                )
-            envpath = ANSI_ESCAPE_PATTERN.sub("", virtualenv_output)
-            self._envpath = envpath.split()[0]
+                else:
+                    envpath = ANSI_ESCAPE_PATTERN.sub("", virtualenv_output)
+                    self._envpath = envpath.split()[0]
+        if not os.path.exists(self._envpath):
+            raise EnvironmentError(self._envpath)
         return self._envpath
 
     @property
     def binpath(self):
         """ Finds the python binary in a given environment path """
         if self._binpath is None:
-            env_ls = os.listdir(self.envpath)
-            if "bin" in env_ls:
-                binpath = os.path.join(self.envpath, "bin", "python")
-            elif "Scripts" in env_ls:
-                binpath = os.path.join(self.envpath, "Scripts", "python.exe")
+            general_error_msg = (
+                f"Could not find python binary path: {collapse_path(self.envpath)}"
+            )
+            if not os.path.exists(self.envpath):
+                self._binpath = general_error_msg
+            elif "bin" in os.listdir(self.envpath) and os.path.exists(
+                os.path.join(self.envpath, "bin", "python")
+            ):
+                self._binpath = os.path.join(self.envpath, "bin", "python")
+            elif "Scripts" in os.listdir(self.envpath) and os.path.exists(
+                os.path.join(self.envpath, "Scripts", "python.exe")
+            ):
+                self._binpath = os.path.join(self.envpath, "Scripts", "python.exe")
             else:
-                raise EnvironmentError(
-                    f"could not find python binary path: {collapse_path(self.envpath)}"
-                )
-            if os.path.exists(binpath):
-                self._binpath = binpath
-            else:
-                raise EnvironmentError(f"could not find python binary: {collapse_path(binpath)}")
+                self._binpath = general_error_msg
+        if not os.path.exists(self._binpath):
+            raise EnvironmentError(self._binpath)
         return self._binpath
 
     @property
